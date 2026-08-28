@@ -1,0 +1,47 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Dashboard · Progreso{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <h1>📊 Tu Progreso</h1>
+    
+    <div class="stats-grid">
+        <div class="stat-card">
+            <span class="stat-icon">🏆</span>
+            <span class="stat-value">{{ user_score.total_points }}</span>
+            <span class="stat-label">Puntos totales</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon">🔥</span>
+            <span class="stat-value">{{ streak.current_streak }}</span>
+            <span class="stat-label">Racha actual</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon">📚</span>
+            <span class="stat-value">{{ progress_count }}</span>
+            <span class="stat-label">Lecciones completadas</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon">⭐</span>
+            <span class="stat-value">{{ streak.max_streak }}</span>
+            <span class="stat-label">Racha máxima</span>
+        </div>
+    </div>
+    
+    <h2>Progreso por curso</h2>
+    <div class="course-progress">
+        {% for course_id, data in course_progress.items %}
+        <div class="progress-item">
+            <span class="course-name">{{ data.name }}</span>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width:{{ data.percentage }}%"></div>
+            </div>
+            <span class="progress-text">{{ data.completed }}/{{ data.total }}</span>
+        </div>
+        {% empty %}
+        <p style="color:rgba(160,250,255,0.5);">No hay progreso registrado.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

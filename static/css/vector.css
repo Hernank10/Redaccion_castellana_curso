@@ -1,0 +1,354 @@
+:root {
+    --bg-primary: #0a0a12;
+    --bg-secondary: #111122;
+    --cyan: #00f0ff;
+    --violet: #b000ff;
+    --cyan-glow: 0 0 15px rgba(0, 240, 255, 0.3);
+    --violet-glow: 0 0 20px rgba(176, 0, 255, 0.4);
+    --text-cyan: #a0faff;
+    --text-violet: #d9a0ff;
+    --card-bg: rgba(18, 18, 40, 0.7);
+    --border-cyan: 1px solid rgba(0, 240, 255, 0.2);
+    --border-violet: 1px solid rgba(176, 0, 255, 0.2);
+    --card-hover: rgba(176, 0, 255, 0.08);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: var(--bg-primary);
+    color: #e0e0ff;
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    background-image: 
+        radial-gradient(circle at 20% 30%, rgba(0, 240, 255, 0.03) 0%, transparent 60%),
+        radial-gradient(circle at 80% 70%, rgba(176, 0, 255, 0.04) 0%, transparent 60%);
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+    background: var(--card-bg);
+    border-bottom: var(--border-cyan);
+    padding: 0.8rem 2rem;
+    backdrop-filter: blur(10px);
+    box-shadow: var(--cyan-glow);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    text-decoration: none;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 1.4rem;
+    background: linear-gradient(135deg, var(--cyan), var(--violet));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
+}
+
+.nav-brand .brand-icon {
+    font-size: 1.8rem;
+    -webkit-text-fill-color: initial;
+    filter: drop-shadow(0 0 10px var(--cyan));
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.nav-links a {
+    color: var(--text-cyan);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+}
+
+.nav-links a:hover {
+    background: rgba(0, 240, 255, 0.1);
+    color: #fff;
+    box-shadow: var(--cyan-glow);
+}
+
+.nav-user {
+    color: var(--text-violet);
+    font-weight: 600;
+}
+
+.nav-logout {
+    color: #ff6b8a !important;
+}
+
+/* ===== MAIN CONTENT ===== */
+.main-content {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    min-height: calc(100vh - 160px);
+}
+
+/* ===== FOOTER ===== */
+.footer {
+    background: var(--card-bg);
+    border-top: var(--border-violet);
+    padding: 1.5rem 2rem;
+    text-align: center;
+    color: rgba(160, 250, 255, 0.4);
+    font-size: 0.8rem;
+    backdrop-filter: blur(8px);
+}
+
+.footer-version {
+    color: var(--text-violet);
+    font-size: 0.7rem;
+    margin-top: 0.2rem;
+}
+
+/* ===== HERO ===== */
+.hero {
+    text-align: center;
+    padding: 3rem 0 2rem 0;
+}
+
+.hero h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 3.2rem;
+    background: linear-gradient(135deg, var(--cyan), var(--violet));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 50px rgba(0, 240, 255, 0.15);
+}
+
+.hero .subtitle {
+    color: var(--text-cyan);
+    font-size: 1.2rem;
+    opacity: 0.7;
+    margin-top: 0.5rem;
+    font-weight: 300;
+}
+
+.hero .stats-badge {
+    display: inline-block;
+    margin-top: 1rem;
+    background: rgba(176, 0, 255, 0.15);
+    border: var(--border-violet);
+    padding: 0.5rem 1.5rem;
+    border-radius: 30px;
+    color: var(--text-violet);
+    font-size: 0.9rem;
+}
+
+/* ===== COURSE GRID ===== */
+.course-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.8rem;
+    margin-top: 2rem;
+}
+
+.course-card {
+    background: var(--card-bg);
+    border: var(--border-cyan);
+    border-radius: 20px;
+    padding: 2rem 1.8rem;
+    backdrop-filter: blur(8px);
+    transition: all 0.4s ease;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    overflow: hidden;
+}
+
+.course-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(from 0deg, transparent, rgba(176, 0, 255, 0.03), transparent, rgba(0, 240, 255, 0.03), transparent);
+    animation: rotateGlow 10s linear infinite;
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+
+.course-card:hover::before {
+    opacity: 1;
+}
+
+@keyframes rotateGlow {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.course-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--violet);
+    box-shadow: var(--violet-glow);
+}
+
+.course-card .icon {
+    font-size: 3rem;
+    margin-bottom: 0.8rem;
+    display: block;
+    position: relative;
+    z-index: 1;
+}
+
+.course-card h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    color: var(--text-cyan);
+    margin-bottom: 0.4rem;
+    position: relative;
+    z-index: 1;
+}
+
+.course-card p {
+    color: rgba(160, 250, 255, 0.6);
+    font-size: 0.9rem;
+    position: relative;
+    z-index: 1;
+}
+
+.course-card .badge {
+    display: inline-block;
+    background: rgba(176, 0, 255, 0.15);
+    color: var(--text-violet);
+    padding: 0.2rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    margin-top: 0.6rem;
+    position: relative;
+    z-index: 1;
+}
+
+.course-card .lesson-count {
+    display: inline-block;
+    background: rgba(0, 240, 255, 0.08);
+    color: var(--text-cyan);
+    padding: 0.2rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    margin-left: 0.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* ===== LESSON DETAIL ===== */
+.lesson-container {
+    padding: 1rem 0;
+}
+
+.lesson-container h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.2rem;
+    background: linear-gradient(135deg, var(--cyan), var(--violet));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+}
+
+.lesson-container .course-description {
+    color: rgba(160, 250, 255, 0.6);
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+}
+
+.lesson-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.lesson-item {
+    background: var(--card-bg);
+    border: var(--border-cyan);
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.lesson-item:hover {
+    border-color: var(--violet);
+    box-shadow: var(--violet-glow);
+}
+
+.lesson-item .lesson-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.lesson-item .lesson-number {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.2rem;
+    color: var(--violet);
+    font-weight: 700;
+    min-width: 40px;
+}
+
+.lesson-item .lesson-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-cyan);
+}
+
+.lesson-item .lesson-details {
+    margin-top: 0.5rem;
+    padding-left: 3.5rem;
+}
+
+.lesson-item .lesson-details .root {
+    color: var(--cyan);
+    font-weight: 600;
+}
+
+.lesson-item .lesson-details .meaning {
+    color: rgba(160, 250, 255, 0.7);
+}
+
+.lesson-item .lesson-details .example {
+    color: var(--text-violet);
+    font-style: italic;
+    margin-top: 0.3rem;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 700px) {
+    .navbar { padding: 0.8rem 1rem; }
+    .nav-brand { font-size: 1.1rem; }
+    .nav-links { gap: 0.8rem; font-size: 0.85rem; }
+    .course-grid { grid-template-columns: 1fr; }
+    .main-content { padding: 1rem; }
+    .hero h1 { font-size: 2.2rem; }
+    .lesson-item { padding: 1rem; }
+    .lesson-item .lesson-details { padding-left: 0; margin-top: 0.8rem; }
+    .lesson-item .lesson-header { flex-wrap: wrap; }
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--violet); border-radius: 8px; box-shadow: var(--violet-glow); }

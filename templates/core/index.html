@@ -1,0 +1,33 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}El Archivo de Vector · Inicio{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1>⌛ El Archivo de Vector</h1>
+    <p class="subtitle">Cronista Temporal · {{ total_lessons }} técnicas de redacción en {{ total_courses }} cursos</p>
+    <div class="stats-badge">
+        📖 {{ total_lessons }} lecciones · 🎯 {{ total_courses }} cursos
+    </div>
+</div>
+
+<div class="course-grid">
+    {% for course in courses %}
+    <a href="{% url 'course_detail' course.slug %}" class="course-card">
+        <span class="icon">{{ course.icon }}</span>
+        <h3>{{ course.name }}</h3>
+        <p>{{ course.description|truncatewords:15|default:"Curso de redacción" }}</p>
+        <div>
+            <span class="badge">{{ course.lessons.count }} lecciones</span>
+            {% if course.lessons.count > 0 %}
+            <span class="lesson-count">✅ activo</span>
+            {% endif %}
+        </div>
+    </a>
+    {% empty %}
+    <p style="grid-column:1/-1;text-align:center;color:rgba(160,250,255,0.5);padding:3rem;">
+        No hay cursos disponibles.
+    </p>
+    {% endfor %}
+</div>
+{% endblock %}
