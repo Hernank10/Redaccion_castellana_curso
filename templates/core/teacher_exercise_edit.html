@@ -1,0 +1,55 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Editar Ejercicio{% endblock %}
+
+{% block content %}
+<div style="max-width:800px;margin:0 auto;">
+    <a href="{% url 'teacher_lesson_detail' lesson.id %}" style="color:var(--text-cyan);text-decoration:none;">← Volver a la lección</a>
+    <h1 style="font-family:'Orbitron',sans-serif;color:var(--text-cyan);">{% if exercise %}Editar{% else %}Crear{% endif %} Ejercicio</h1>
+
+    <form method="post" style="background:var(--card-bg);border:var(--border-cyan);border-radius:16px;padding:2rem;margin-top:1.5rem;">
+        {% csrf_token %}
+        <input type="hidden" name="lesson_id" value="{{ lesson.id }}">
+
+        <div style="margin-bottom:1rem;">
+            <label style="display:block;color:var(--text-cyan);margin-bottom:0.3rem;">Tipo de ejercicio</label>
+            <select name="exercise_type" style="width:100%;padding:0.6rem;background:rgba(0,0,0,0.3);border:1px solid rgba(0,240,255,0.2);border-radius:8px;color:#fff;">
+                <option value="multiple_choice" {% if exercise.exercise_type == 'multiple_choice' %}selected{% endif %}>Opción Múltiple</option>
+                <option value="true_false" {% if exercise.exercise_type == 'true_false' %}selected{% endif %}>Verdadero/Falso</option>
+                <option value="fill_blank" {% if exercise.exercise_type == 'fill_blank' %}selected{% endif %}>Completar</option>
+                <option value="matching" {% if exercise.exercise_type == 'matching' %}selected{% endif %}>Emparejar</option>
+            </select>
+        </div>
+
+        <div style="margin-bottom:1rem;">
+            <label style="display:block;color:var(--text-cyan);margin-bottom:0.3rem;">Pregunta</label>
+            <textarea name="question" rows="3" style="width:100%;padding:0.6rem;background:rgba(0,0,0,0.3);border:1px solid rgba(0,240,255,0.2);border-radius:8px;color:#fff;">{{ exercise.question|default:'' }}</textarea>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div><label style="display:block;color:var(--text-cyan);">Opción A</label><input type="text" name="option_a" value="{{ exercise.option_a|default:'' }}" style="width:100%;padding:0.6rem;background:rgba(0,0,0,0.3);border:1px solid rgba(0,240,255,0.2);border-radius:8px;color:#fff;"></div>
+            <div><label style="display:block;color:var(--text-cyan);">Opción B</label><input type="text" name="option_b" value="{{ exercise.option_b|default:'' }}" style="width:100%;padding:0.6rem;background:rgba(0,0,0,0.3);border:1px solid rgba(0,240,255,0.2);border-radius:8px;color:#fff;"></div>
+            <div><label style="display:block;color:var(--text-cyan);">Opción C</label><input type="text" name="option_c" value="{{ exercise.option_c|default:'' }}" style="width:100%;padding:0.6rem;background:rgba(0,0,0,0.3);border:1px solid rgba(0,240,255,0.2);border-radius:8px;color:#fff;"></div>
+            <div><label style="display:block;color:var(--text-cyan);">Opción D</label><input type="text" name="option_d" value="{{ exercise.option_d|default:'' }}" style="width:100%;padding:0.6rem;background:rgba(0,0,0,0.3);border:1px solid rgba(0,240,255,0.2);border-radius:8px;color:#fff;"></div>
+        </div>
+
+        <div style="margin-top:1rem;display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">
+            <div><label style="display:block;color:var(--text-cyan);">Respuesta correcta (A, B, C, D, V, F)</label><input type="text" name="correct_answer" value="{{ exercise.correct_answer|default:'A' }}" style="width:100%;padding:0.6rem;background:rgba(0,0,0,0.3);border:1px solid rgba(0,240,255,0.2);border-radius:8px;color:#fff;"></div>
+            <div><label style="display:block;color:var(--text-cyan);">Puntos</label><input type="number" name="points" value="{{ exercise.points|default:1 }}" style="width:100%;padding:0.6rem;background:rgba(0,0,0,0.3);border:1px solid rgba(0,240,255,0.2);border-radius:8px;color:#fff;"></div>
+            <div style="display:flex;align-items:center;gap:0.5rem;margin-top:1.5rem;">
+                <input type="checkbox" name="is_active" id="is_active" {% if exercise.is_active %}checked{% endif %}>
+                <label for="is_active" style="color:var(--text-cyan);">Activo</label>
+            </div>
+        </div>
+
+        <div style="margin-top:1rem;">
+            <label style="display:block;color:var(--text-cyan);margin-bottom:0.3rem;">Explicación (opcional)</label>
+            <textarea name="explanation" rows="2" style="width:100%;padding:0.6rem;background:rgba(0,0,0,0.3);border:1px solid rgba(0,240,255,0.2);border-radius:8px;color:#fff;">{{ exercise.explanation|default:'' }}</textarea>
+        </div>
+
+        <button type="submit" style="margin-top:1.5rem;background:linear-gradient(135deg,var(--cyan),var(--violet));border:none;padding:0.6rem 2rem;border-radius:30px;color:#fff;font-weight:600;cursor:pointer;transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+            {% if exercise %}Guardar cambios{% else %}Crear ejercicio{% endif %}
+        </button>
+    </form>
+</div>
+{% endblock %}

@@ -3,68 +3,236 @@
 {% load custom_filters %}
 {% block title %}{{ course.name }}{% endblock %}
 
+{% block extra_css %}
+<style>
+    .course-header {
+        background: var(--card-bg);
+        border: var(--border-cyan);
+        border-radius: 24px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        backdrop-filter: blur(8px);
+        box-shadow: var(--cyan-glow);
+    }
+    .course-header h1 {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 2rem;
+        margin-bottom: 0.3rem;
+        background: linear-gradient(135deg, var(--cyan), var(--violet));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .course-stats {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        margin-top: 0.8rem;
+    }
+    .course-stats .stat-item {
+        color: rgba(160, 250, 255, 0.6);
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .course-stats .stat-item strong {
+        color: #fff;
+    }
+    .lesson-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 1.2rem;
+        margin-top: 1.5rem;
+    }
+    .lesson-card {
+        background: var(--card-bg);
+        border: 1px solid rgba(0,240,255,0.06);
+        border-radius: 16px;
+        padding: 1.2rem 1.5rem;
+        transition: all 0.3s;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+    .lesson-card:hover {
+        border-color: var(--violet);
+        transform: translateY(-3px);
+        box-shadow: var(--violet-glow);
+    }
+    .lesson-card .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.4rem;
+    }
+    .lesson-card .lesson-number {
+        font-family: 'Orbitron', monospace;
+        font-size: 0.8rem;
+        color: var(--violet);
+        background: rgba(176,0,255,0.1);
+        padding: 0.1rem 0.6rem;
+        border-radius: 30px;
+    }
+    .lesson-card .lesson-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-cyan);
+        margin-bottom: 0.3rem;
+    }
+    .lesson-card .lesson-root {
+        font-size: 0.9rem;
+        color: var(--cyan);
+    }
+    .lesson-card .lesson-meaning {
+        font-size: 0.9rem;
+        color: rgba(160,250,255,0.7);
+        margin-top: 0.2rem;
+    }
+    .lesson-card .lesson-example {
+        font-size: 0.9rem;
+        color: var(--text-violet);
+        font-style: italic;
+        margin-top: 0.2rem;
+    }
+    .lesson-card .lesson-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 0.8rem;
+        border-top: 1px solid rgba(0,240,255,0.05);
+        padding-top: 0.6rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    .lesson-card .lesson-meta .duration {
+        font-size: 0.8rem;
+        color: rgba(160,250,255,0.5);
+    }
+    .badge-completed {
+        display: inline-block;
+        font-size: 0.7rem;
+        background: rgba(0,240,255,0.15);
+        color: var(--cyan);
+        padding: 0.1rem 0.6rem;
+        border-radius: 30px;
+        border: 1px solid rgba(0,240,255,0.2);
+    }
+    .btn-practice {
+        background: rgba(176,0,255,0.15);
+        color: var(--text-violet);
+        border: 1px solid var(--border-violet);
+        padding: 0.15rem 0.8rem;
+        border-radius: 30px;
+        font-size: 0.75rem;
+        font-family: 'Orbitron', monospace;
+        text-decoration: none;
+        transition: all 0.3s;
+        display: inline-block;
+    }
+    .btn-practice:hover {
+        background: rgba(176,0,255,0.25);
+        box-shadow: var(--violet-glow);
+    }
+    .lesson-details-expanded {
+        display: none;
+        margin-top: 0.6rem;
+        padding-top: 0.6rem;
+        border-top: 1px solid rgba(0,240,255,0.05);
+    }
+    .lesson-details-expanded .breakdown {
+        font-size: 0.85rem;
+        color: rgba(160,250,255,0.5);
+    }
+    @media (max-width: 700px) {
+        .lesson-grid {
+            grid-template-columns: 1fr;
+        }
+        .course-header h1 {
+            font-size: 1.6rem;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="lesson-container">
+<div class="course-header">
     <a href="{% url 'index' %}" style="color:var(--text-cyan);text-decoration:none;font-size:0.9rem;">
         ← Volver al inicio
     </a>
-    
     <h1>{{ course.icon }} {{ course.name }}</h1>
-    <p class="course-description">{{ course.description|default:"Curso de redacción" }}</p>
-    
-    <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;">
-        <span class="badge" style="background:rgba(176,0,255,0.15);color:var(--text-violet);padding:0.3rem 1rem;border-radius:20px;">
-            📚 {{ lessons.count }} lecciones
-        </span>
-        <span class="badge" style="background:rgba(0,240,255,0.08);color:var(--text-cyan);padding:0.3rem 1rem;border-radius:20px;">
-            {% if user.is_authenticated %}👤 {{ user.username }}{% else %}🔓 Inicia sesión para guardar progreso{% endif %}
-        </span>
+    <p style="color:rgba(160,250,255,0.6);margin:0.3rem 0 0.8rem;">{{ course.description }}</p>
+    <div class="course-stats">
+        <span class="stat-item">📚 <strong>{{ lessons.count }}</strong> lecciones</span>
+        <span class="stat-item">⏱️ <strong>{{ lessons.count|add:0 }} min</strong> total</span>
+        <span class="stat-item">📊 Nivel: <strong>Intermedio</strong></span>
+        {% if user.is_authenticated %}
+        <span class="stat-item">👤 <strong>{{ user.username }}</strong></span>
+        {% else %}
+        <span class="stat-item">🔓 Inicia sesión para guardar progreso</span>
+        {% endif %}
     </div>
+</div>
 
-    <div class="lesson-grid">
-        {% for lesson in lessons %}
-        <div class="lesson-item" onclick="toggleLesson(this)">
-            <div class="lesson-header">
-                <span class="lesson-number">#{{ lesson.order }}</span>
-                <span class="lesson-title">{{ lesson.title }}</span>
+<div class="lesson-grid">
+    {% for lesson in lessons %}
+    <div class="lesson-card" onclick="toggleLesson(this)">
+        <div class="card-header">
+            <span class="lesson-number">#{{ lesson.order }}</span>
+            {% if user.is_authenticated %}
+                {% with prog=progress|get_item:lesson.id %}
+                    {% if prog.completed %}
+                        <span class="badge-completed">✅ Completada</span>
+                    {% endif %}
+                {% endwith %}
+            {% endif %}
+        </div>
+        <div class="lesson-title">{{ lesson.title }}</div>
+        <div class="lesson-root">📖 Raíz: {{ lesson.root }}</div>
+        <div class="lesson-meaning">💡 {{ lesson.meaning|truncatechars:80 }}</div>
+        {% if lesson.example %}
+        <div class="lesson-example">📝 "{{ lesson.example|truncatechars:60 }}"</div>
+        {% endif %}
+        <div class="lesson-meta">
+            <span class="duration">⏱️ {{ lesson.duration_minutes|default:5 }} min</span>
+            <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+                <a href="{% url 'practice_lesson' lesson.id %}" class="btn-practice" onclick="event.stopPropagation();">
+                    📝 Practicar
+                </a>
                 {% if user.is_authenticated %}
                     {% with prog=progress|get_item:lesson.id %}
                         {% if prog.completed %}
-                            <span style="color:var(--cyan);margin-left:auto;">✅</span>
+                            <a href="{% url 'practice_lesson' lesson.id %}" class="btn-practice" onclick="event.stopPropagation();">
+                                🔁 Repasar
+                            </a>
                         {% endif %}
                     {% endwith %}
                 {% endif %}
             </div>
-            <div class="lesson-details" style="display:none;">
-                <div><span class="root">📖 Raíz:</span> {{ lesson.root }}</div>
-                <div><span class="meaning">💡 Significado:</span> {{ lesson.meaning }}</div>
-                {% if lesson.example %}
-                <div class="example">📝 "{{ lesson.example }}"</div>
-                {% endif %}
-                {% if lesson.breakdown %}
-                <div style="color:rgba(160,250,255,0.5);font-size:0.9rem;margin-top:0.3rem;">
-                    🔍 {{ lesson.breakdown }}
-                </div>
-                {% endif %}
-            </div>
         </div>
-        {% empty %}
-        <p style="color:rgba(160,250,255,0.5);text-align:center;padding:3rem;">
-            No hay lecciones disponibles para este curso.
-        </p>
-        {% endfor %}
+        <div class="lesson-details-expanded">
+            {% if lesson.breakdown %}
+            <div class="breakdown">🔍 {{ lesson.breakdown }}</div>
+            {% endif %}
+        </div>
     </div>
+    {% empty %}
+    <p style="grid-column:1/-1;text-align:center;color:rgba(160,250,255,0.5);padding:3rem;">
+        No hay lecciones disponibles.
+    </p>
+    {% endfor %}
 </div>
 
 <script>
 function toggleLesson(el) {
-    const details = el.querySelector('.lesson-details');
-    if (details.style.display === 'none') {
-        details.style.display = 'block';
-        el.style.borderColor = 'var(--violet)';
-    } else {
-        details.style.display = 'none';
-        el.style.borderColor = 'var(--border-cyan)';
+    const details = el.querySelector('.lesson-details-expanded');
+    if (details) {
+        if (details.style.display === 'none') {
+            details.style.display = 'block';
+            el.style.borderColor = 'var(--violet)';
+        } else {
+            details.style.display = 'none';
+            el.style.borderColor = 'rgba(0,240,255,0.06)';
+        }
     }
 }
 </script>

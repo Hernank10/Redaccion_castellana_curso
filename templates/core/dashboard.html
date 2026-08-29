@@ -1,16 +1,174 @@
 {% extends 'core/base.html' %}
 {% load static %}
-{% block title %}Dashboard · Progreso{% endblock %}
+{% block title %}Dashboard · Mi Progreso{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+    .dashboard-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .stat-card {
+        background: var(--card-bg);
+        border: var(--border-cyan);
+        border-radius: 16px;
+        padding: 1.5rem;
+        text-align: center;
+        transition: all 0.3s;
+        backdrop-filter: blur(4px);
+    }
+    .stat-card:hover {
+        transform: translateY(-4px);
+        border-color: var(--violet);
+        box-shadow: var(--violet-glow);
+    }
+    .stat-card .stat-icon {
+        font-size: 2.2rem;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    .stat-card .stat-value {
+        font-family: 'Orbitron', monospace;
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-cyan);
+    }
+    .stat-card .stat-label {
+        font-size: 0.85rem;
+        color: rgba(160, 250, 255, 0.6);
+        margin-top: 0.2rem;
+    }
+    .progress-overall {
+        background: var(--card-bg);
+        border: var(--border-cyan);
+        border-radius: 16px;
+        padding: 1.5rem 2rem;
+        margin-bottom: 2rem;
+    }
+    .progress-overall .progress-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.9rem;
+        color: var(--text-cyan);
+        margin-bottom: 0.3rem;
+    }
+    .progress-bar-bg {
+        width: 100%;
+        height: 12px;
+        background: rgba(0,240,255,0.08);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    }
+    .progress-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--cyan), var(--violet));
+        border-radius: 20px;
+        transition: width 1.2s ease;
+        width: 0%;
+    }
+    .course-progress-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    .course-progress-item {
+        background: var(--card-bg);
+        border: 1px solid rgba(0,240,255,0.06);
+        border-radius: 12px;
+        padding: 0.8rem 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: all 0.3s;
+    }
+    .course-progress-item:hover {
+        border-color: var(--violet);
+    }
+    .course-progress-item .course-icon {
+        font-size: 1.8rem;
+        flex-shrink: 0;
+    }
+    .course-progress-item .course-info {
+        flex: 1;
+    }
+    .course-progress-item .course-name {
+        font-weight: 600;
+        color: #e0e0ff;
+    }
+    .course-progress-item .course-stats {
+        font-size: 0.8rem;
+        color: rgba(160, 250, 255, 0.5);
+    }
+    .course-progress-item .course-bar {
+        width: 120px;
+        flex-shrink: 0;
+    }
+    .course-progress-item .course-bar .progress-bar-bg {
+        height: 8px;
+    }
+    .course-progress-item .course-percent {
+        font-family: 'Orbitron', monospace;
+        font-size: 0.8rem;
+        color: var(--text-cyan);
+        min-width: 40px;
+        text-align: right;
+    }
+    .btn-dashboard {
+        display: inline-block;
+        padding: 0.6rem 2rem;
+        background: linear-gradient(135deg, var(--cyan), var(--violet));
+        color: #fff;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        font-family: 'Orbitron', monospace;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+    }
+    .btn-dashboard:hover {
+        transform: scale(1.03);
+        box-shadow: 0 0 30px rgba(176,0,255,0.3);
+    }
+    @media (max-width: 700px) {
+        .dashboard-stats {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .course-progress-item {
+            flex-wrap: wrap;
+        }
+        .course-progress-item .course-bar {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="dashboard">
-    <h1>📊 Tu Progreso</h1>
-    
-    <div class="stats-grid">
+<div class="dashboard-container">
+    <h1 style="font-family:'Orbitron',sans-serif;font-size:2rem;color:var(--text-cyan);margin-bottom:0.3rem;">📊 Mi Progreso</h1>
+    <p style="color:rgba(160,250,255,0.5);margin-bottom:2rem;">Sigue tu avance en el Archivo de Vector</p>
+
+    <!-- Tarjetas de estadísticas -->
+    <div class="dashboard-stats">
         <div class="stat-card">
-            <span class="stat-icon">🏆</span>
+            <span class="stat-icon">📖</span>
+            <span class="stat-value">{{ user_score.lessons_completed }}</span>
+            <span class="stat-label">Lecciones completadas</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon">⭐</span>
             <span class="stat-value">{{ user_score.total_points }}</span>
-            <span class="stat-label">Puntos totales</span>
+            <span class="stat-label">Puntuación total</span>
         </div>
         <div class="stat-card">
             <span class="stat-icon">🔥</span>
@@ -18,30 +176,64 @@
             <span class="stat-label">Racha actual</span>
         </div>
         <div class="stat-card">
-            <span class="stat-icon">📚</span>
-            <span class="stat-value">{{ progress_count }}</span>
-            <span class="stat-label">Lecciones completadas</span>
-        </div>
-        <div class="stat-card">
-            <span class="stat-icon">⭐</span>
+            <span class="stat-icon">🏆</span>
             <span class="stat-value">{{ streak.max_streak }}</span>
             <span class="stat-label">Racha máxima</span>
         </div>
     </div>
-    
-    <h2>Progreso por curso</h2>
-    <div class="course-progress">
+
+    <!-- Progreso general -->
+    <div class="progress-overall">
+        <div class="progress-label">
+            <span>📈 Progreso general</span>
+            <span>{{ completed_lessons }} / {{ total_lessons }} lecciones</span>
+        </div>
+        <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="overallProgress" style="width: {{ completed_lessons|divisibleby:total_lessons|yesno:"100,0" }}%;"></div>
+        </div>
+    </div>
+
+    <!-- Progreso por curso -->
+    <h2 style="font-family:'Orbitron',sans-serif;font-size:1.2rem;color:var(--text-cyan);margin:2rem 0 1rem;">📚 Progreso por curso</h2>
+    <div class="course-progress-list">
         {% for course_id, data in course_progress.items %}
-        <div class="progress-item">
-            <span class="course-name">{{ data.name }}</span>
-            <div class="progress-bar">
-                <div class="progress-fill" style="width:{{ data.percentage }}%"></div>
+        <div class="course-progress-item">
+            <span class="course-icon">{{ data.icon|default:"📚" }}</span>
+            <div class="course-info">
+                <div class="course-name">{{ data.name }}</div>
+                <div class="course-stats">{{ data.completed }} / {{ data.total }} lecciones</div>
             </div>
-            <span class="progress-text">{{ data.completed }}/{{ data.total }}</span>
+            <div class="course-bar">
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill course-bar-fill" style="width: {{ data.percentage }}%;"></div>
+                </div>
+            </div>
+            <span class="course-percent">{{ data.percentage }}%</span>
         </div>
         {% empty %}
-        <p style="color:rgba(160,250,255,0.5);">No hay progreso registrado.</p>
+        <p style="color:rgba(160,250,255,0.5);text-align:center;padding:2rem;">No hay cursos con progreso registrado. ¡Empieza a aprender!</p>
         {% endfor %}
     </div>
+
+    <!-- Botón de navegación -->
+    <div style="margin-top:2.5rem;text-align:center;">
+        <a href="{% url 'index' %}" class="btn-dashboard">← Volver a los cursos</a>
+    </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animar barras de progreso al cargar
+    const fills = document.querySelectorAll('.course-bar-fill, #overallProgress');
+    fills.forEach(function(bar) {
+        const targetWidth = bar.style.width;
+        bar.style.width = '0%';
+        setTimeout(function() {
+            bar.style.width = targetWidth;
+        }, 200);
+    });
+});
+</script>
 {% endblock %}

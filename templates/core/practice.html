@@ -1,0 +1,445 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Practicar - {{ lesson.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .practice-header {
+        background: var(--card-bg);
+        border: var(--border-cyan);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        backdrop-filter: blur(8px);
+    }
+    .practice-header h1 {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.8rem;
+        background: linear-gradient(135deg, var(--cyan), var(--violet));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.3rem;
+    }
+    .practice-header .subtitle {
+        color: var(--text-cyan);
+        opacity: 0.7;
+    }
+    .practice-header .lesson-info {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 0.5rem;
+        color: rgba(160,250,255,0.5);
+        font-size: 0.9rem;
+    }
+    .exercise-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: var(--card-bg);
+        border: var(--border-cyan);
+        border-radius: 20px;
+        padding: 2rem;
+        backdrop-filter: blur(8px);
+    }
+    .exercise-progress {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        color: var(--text-cyan);
+        font-size: 0.9rem;
+    }
+    .exercise-progress .progress-bar {
+        flex: 1;
+        height: 6px;
+        background: rgba(0,240,255,0.1);
+        border-radius: 10px;
+        margin: 0 1rem;
+        overflow: hidden;
+    }
+    .exercise-progress .progress-bar .fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--cyan), var(--violet));
+        border-radius: 10px;
+        transition: width 0.6s ease;
+        width: 0%;
+    }
+    .exercise-question {
+        font-size: 1.2rem;
+        font-weight: 500;
+        color: #e0e0ff;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+    }
+    .exercise-options {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+        margin-bottom: 1.5rem;
+    }
+    .exercise-options .option-btn {
+        padding: 0.8rem 1.2rem;
+        border-radius: 12px;
+        background: rgba(0,240,255,0.04);
+        border: 1px solid rgba(0,240,255,0.1);
+        color: #b0b0ff;
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.25s;
+        text-align: left;
+        width: 100%;
+    }
+    .exercise-options .option-btn:hover:not(:disabled) {
+        background: rgba(0,240,255,0.1);
+        border-color: var(--cyan);
+        color: #fff;
+    }
+    .exercise-options .option-btn.correct {
+        background: rgba(0,240,255,0.2);
+        border-color: var(--cyan);
+        color: #fff;
+        box-shadow: 0 0 25px rgba(0,240,255,0.15);
+    }
+    .exercise-options .option-btn.wrong {
+        background: rgba(255,0,100,0.15);
+        border-color: #ff0055;
+        color: #ff88aa;
+    }
+    .exercise-options .option-btn:disabled {
+        cursor: default;
+        opacity: 0.7;
+    }
+    .exercise-feedback {
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        display: none;
+    }
+    .exercise-feedback.show {
+        display: block;
+    }
+    .exercise-feedback.correct {
+        background: rgba(0,240,255,0.08);
+        color: var(--text-cyan);
+        border: 1px solid rgba(0,240,255,0.2);
+    }
+    .exercise-feedback.wrong {
+        background: rgba(255,0,100,0.08);
+        color: #ff88aa;
+        border: 1px solid rgba(255,0,100,0.2);
+    }
+    .exercise-feedback .explanation {
+        margin-top: 0.5rem;
+        color: rgba(160,250,255,0.6);
+        font-size: 0.9rem;
+    }
+    .exercise-nav {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    .btn-nav {
+        padding: 0.5rem 2rem;
+        border-radius: 30px;
+        font-family: 'Orbitron', monospace;
+        font-size: 0.7rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        letter-spacing: 1px;
+        border: none;
+    }
+    .btn-nav-primary {
+        background: rgba(176,0,255,0.15);
+        border: 1px solid var(--violet);
+        color: var(--text-violet);
+    }
+    .btn-nav-primary:hover:not(:disabled) {
+        background: rgba(176,0,255,0.25);
+        box-shadow: var(--violet-glow);
+    }
+    .btn-nav-secondary {
+        background: rgba(0,240,255,0.08);
+        border: 1px solid var(--cyan);
+        color: var(--text-cyan);
+    }
+    .btn-nav-secondary:hover:not(:disabled) {
+        background: rgba(0,240,255,0.2);
+        box-shadow: var(--cyan-glow);
+    }
+    .btn-nav:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+    }
+    .results-box {
+        text-align: center;
+        padding: 2rem;
+    }
+    .results-box .score-number {
+        font-family: 'Orbitron', monospace;
+        font-size: 4rem;
+        background: linear-gradient(135deg, var(--cyan), var(--violet));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .results-box .score-label {
+        color: var(--text-cyan);
+        font-size: 1.2rem;
+        margin-top: 0.5rem;
+    }
+    .results-box .message {
+        margin: 1rem 0;
+        font-size: 1.1rem;
+    }
+    .results-box .btn-group {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 1.5rem;
+    }
+    @media (max-width: 700px) {
+        .exercise-container {
+            padding: 1.2rem;
+        }
+        .exercise-progress {
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .exercise-progress .progress-bar {
+            margin: 0;
+            flex-basis: 100%;
+        }
+        .btn-nav {
+            padding: 0.4rem 1.2rem;
+            font-size: 0.65rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="practice-header">
+    <a href="{% url 'course_detail' lesson.course.slug %}" style="color:var(--text-cyan);text-decoration:none;font-size:0.9rem;">
+        ← Volver al curso
+    </a>
+    <h1>📝 Practicar: {{ lesson.title }}</h1>
+    <div class="subtitle">{{ lesson.root }} — {{ lesson.meaning|truncatechars:60 }}</div>
+    <div class="lesson-info">
+        <span>📚 Curso: {{ lesson.course.name }}</span>
+        <span>⏱️ {{ lesson.duration_minutes|default:5 }} min</span>
+        <span>📊 {{ exercises.count }} ejercicios</span>
+    </div>
+</div>
+
+<div class="exercise-container">
+    {% if exercises %}
+        <div id="app">
+            <div class="exercise-progress">
+                <span id="questionCounter">Pregunta 1 de {{ exercises.count }}</span>
+                <div class="progress-bar">
+                    <div class="fill" id="progressFill" style="width: 0%;"></div>
+                </div>
+                <span id="scoreCounter">✅ 0</span>
+            </div>
+
+            <div id="questionContainer">
+                <div class="exercise-question" id="questionText"></div>
+                <div class="exercise-options" id="optionsContainer"></div>
+                <div class="exercise-feedback" id="feedback">
+                    <span id="feedbackText"></span>
+                    <div class="explanation" id="explanationText"></div>
+                </div>
+            </div>
+
+            <div id="resultsContainer" style="display:none;">
+                <div class="results-box">
+                    <div class="score-number" id="finalScore">0%</div>
+                    <div class="score-label">de {{ exercises.count }} ejercicios</div>
+                    <div class="message" id="resultMessage"></div>
+                    <div class="btn-group">
+                        <a href="{% url 'practice_lesson' lesson.id %}" class="btn-nav btn-nav-secondary">🔄 Repetir</a>
+                        <a href="{% url 'course_detail' lesson.course.slug %}" class="btn-nav btn-nav-primary">← Volver al curso</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="exercise-nav">
+                <button class="btn-nav btn-nav-secondary" id="prevBtn" disabled>◀ Anterior</button>
+                <button class="btn-nav btn-nav-primary" id="nextBtn">Siguiente ▶</button>
+            </div>
+        </div>
+    {% else %}
+        <p style="text-align:center;color:rgba(160,250,255,0.5);padding:2rem;">
+            No hay ejercicios disponibles para esta lección.
+        </p>
+        <div style="text-align:center;margin-top:1rem;">
+            <a href="{% url 'course_detail' lesson.course.slug %}" class="btn-nav btn-nav-primary">
+                ← Volver al curso
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const exercises = {{ exercises|safe }};
+        const total = exercises.length;
+        let currentIndex = 0;
+        let score = 0;
+        let answered = false;
+        let results = [];
+
+        if (total === 0) return;
+
+        const questionText = document.getElementById('questionText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const feedback = document.getElementById('feedback');
+        const feedbackText = document.getElementById('feedbackText');
+        const explanationText = document.getElementById('explanationText');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const questionCounter = document.getElementById('questionCounter');
+        const scoreCounter = document.getElementById('scoreCounter');
+        const progressFill = document.getElementById('progressFill');
+        const questionContainer = document.getElementById('questionContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const finalScore = document.getElementById('finalScore');
+        const resultMessage = document.getElementById('resultMessage');
+
+        function renderQuestion(index) {
+            const ex = exercises[index];
+            questionText.textContent = ex.question;
+            optionsContainer.innerHTML = '';
+            const labels = ['A', 'B', 'C', 'D'];
+            ex.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = `${labels[i]}. ${opt}`;
+                btn.dataset.index = i;
+                btn.dataset.correct = ex.correct;
+                btn.addEventListener('click', function() {
+                    if (answered) return;
+                    selectOption(this, ex);
+                });
+                optionsContainer.appendChild(btn);
+            });
+
+            feedback.className = 'exercise-feedback';
+            feedback.style.display = 'none';
+            answered = false;
+
+            questionCounter.textContent = `Pregunta ${index + 1} de ${total}`;
+            progressFill.style.width = `${((index + 1) / total) * 100}%`;
+            scoreCounter.textContent = `✅ ${score}`;
+
+            prevBtn.disabled = (index === 0);
+            nextBtn.textContent = (index === total - 1) ? '📊 Ver resultados' : 'Siguiente ▶';
+        }
+
+        function selectOption(btn, ex) {
+            const selected = btn.dataset.index;
+            const correct = ex.correct;
+            const labels = ['A', 'B', 'C', 'D'];
+            const selectedLabel = labels[selected];
+            const correctLabel = correct;
+
+            answered = true;
+            document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+
+            if (selectedLabel === correctLabel) {
+                btn.classList.add('correct');
+                score++;
+                scoreCounter.textContent = `✅ ${score}`;
+                feedback.className = 'exercise-feedback show correct';
+                feedbackText.textContent = '✅ ¡Correcto! Bien hecho.';
+                results.push({ correct: true, selected: selectedLabel, expected: correctLabel });
+            } else {
+                btn.classList.add('wrong');
+                document.querySelectorAll('.option-btn').forEach(b => {
+                    if (b.dataset.index === labels.indexOf(correctLabel)) {
+                        b.classList.add('correct');
+                    }
+                });
+                feedback.className = 'exercise-feedback show wrong';
+                feedbackText.textContent = `❌ No. La respuesta correcta era "${correctLabel}".`;
+                results.push({ correct: false, selected: selectedLabel, expected: correctLabel });
+            }
+
+            if (ex.explanation) {
+                explanationText.textContent = ex.explanation;
+            } else {
+                explanationText.textContent = '';
+            }
+            feedback.style.display = 'block';
+        }
+
+        function showResults() {
+            questionContainer.style.display = 'none';
+            prevBtn.style.display = 'none';
+            nextBtn.style.display = 'none';
+            resultsContainer.style.display = 'block';
+
+            const correctCount = results.filter(r => r.correct).length;
+            const pct = Math.round((correctCount / total) * 100);
+            finalScore.textContent = `${pct}%`;
+
+            let msg = '';
+            if (pct >= 90) msg = '🌟 ¡Excelente! Eres un maestro de la redacción.';
+            else if (pct >= 70) msg = '🌟 ¡Muy bien! Sigue practicando para mejorar.';
+            else if (pct >= 50) msg = '📚 Buen intento. Repasa la lección y vuelve a intentarlo.';
+            else msg = '📖 Te recomendamos repasar la teoría antes de practicar.';
+            resultMessage.textContent = msg;
+
+            // Guardar progreso
+            const completed = pct >= 70;
+            const lessonId = {{ lesson.id }};
+            fetch('/api/guardar-progreso/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+                body: JSON.stringify({
+                    lesson_id: lessonId,
+                    score: pct,
+                    completed: completed
+                })
+            })
+            .then(r => r.json())
+            .then(data => console.log('Progreso guardado:', data))
+            .catch(e => console.error('Error:', e));
+        }
+
+        prevBtn.addEventListener('click', function() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion(currentIndex);
+            }
+        });
+
+        nextBtn.addEventListener('click', function() {
+            if (!answered && currentIndex < total - 1) {
+                alert('Responde la pregunta antes de continuar.');
+                return;
+            }
+            if (currentIndex === total - 1) {
+                if (results.length === total) {
+                    showResults();
+                } else {
+                    alert('Responde la pregunta antes de ver los resultados.');
+                }
+                return;
+            }
+            if (currentIndex < total - 1) {
+                currentIndex++;
+                renderQuestion(currentIndex);
+            }
+        });
+
+        renderQuestion(0);
+    });
+</script>
+{% endblock %}
