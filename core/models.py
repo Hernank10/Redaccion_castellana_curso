@@ -130,3 +130,25 @@ class UserScore(models.Model):
     
     def __str__(self):
         return f"{self.user.username}: {self.total_points} pts"
+
+class Certificado(models.Model):
+    """Modelo para almacenar certificados generados"""
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='certificados')
+    curso = models.ForeignKey('Course', on_delete=models.CASCADE, related_name='certificados', null=True, blank=True)
+    leccion = models.ForeignKey('Lesson', on_delete=models.CASCADE, related_name='certificados', null=True, blank=True)
+    titulo = models.CharField(max_length=200)
+    puntuacion = models.PositiveIntegerField(default=0)
+    ejercicios_completados = models.PositiveIntegerField(default=0)
+    total_ejercicios = models.PositiveIntegerField(default=0)
+    porcentaje = models.PositiveIntegerField(default=0)
+    codigo_verificacion = models.CharField(max_length=50, unique=True)
+    fecha_emision = models.DateTimeField(auto_now_add=True)
+    archivo_pdf = models.FileField(upload_to='certificados/', blank=True, null=True)
+    
+    def __str__(self):
+        return f"Certificado de {self.usuario.username} - {self.titulo[:30]}"
+    
+    class Meta:
+        ordering = ['-fecha_emision']
+        verbose_name = 'Certificado'
+        verbose_name_plural = 'Certificados'

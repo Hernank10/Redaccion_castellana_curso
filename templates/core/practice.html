@@ -443,3 +443,19 @@
     });
 </script>
 {% endblock %}
+<!-- Al final del ejercicio, después de mostrar resultados -->
+<div class="certificate-section" style="text-align:center;margin-top:2rem;">
+    {% if user.is_authenticated and porcentaje >= 70 %}
+        <a href="{% url 'certificado_leccion' lesson.id %}" target="_blank" 
+           style="display:inline-block;background:linear-gradient(135deg,var(--cyan),var(--violet));color:#fff;padding:0.8rem 2.5rem;border-radius:30px;text-decoration:none;font-weight:600;margin:0.5rem;">
+            📜 Descargar Certificado
+        </a>
+        <p style="color:rgba(160,250,255,0.5);font-size:0.8rem;margin-top:0.3rem;">
+            ✅ ¡Felicidades! Has completado el 70% o más de los ejercicios.
+        </p>
+    {% elif user.is_authenticated %}
+        <p style="color:rgba(160,250,255,0.4);font-size:0.9rem;">
+            📚 Continúa practicando. Necesitas al menos 70% de aciertos para obtener tu certificado.
+        </p>
+    {% endif %}
+</div>

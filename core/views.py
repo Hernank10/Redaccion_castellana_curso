@@ -1,3 +1,13 @@
+from django.db import models
+from django.http import HttpResponse
+from reportlab.lib.pagesizes import A4, landscape
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import cm
+from reportlab.lib.enums import TA_CENTER
+import uuid
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
@@ -223,3 +233,381 @@ def teacher_exercise_delete(request, exercise_id):
     lesson_id = exercise.lesson.id
     exercise.delete()
     return redirect('teacher_lesson_detail', lesson_id=lesson_id)
+
+from django.http import HttpResponse
+from django.template.loader import get_template
+from io import BytesIO
+from reportlab.lib.pagesizes import A4, landscape
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import cm, mm
+from reportlab.lib.enums import TA_CENTER, TA_LEFT
+import qrcode
+import uuid
+import os
+from django.conf import settings
+
+@login_required
+def generar_certificado(request, leccion_id=None, curso_slug=None):
+    """Genera un certificado en PDF para el usuario"""
+    user = request.user
+    
+    # Obtener progreso del usuario
+    if leccion_id:
+        leccion = get_object_or_404(Lesson, id=leccion_id, is_active=True)
+        curso = leccion.course
+        ejercicios = leccion.exercises.filter(is_active=True)
+        total_ejercicios = ejercicios.count()
+        completados = UserProgress.objects.filter(
+            user=user, lesson=leccion, completed=True
+        ).count()
+        puntuacion = UserProgress.objects.filter(
+            user=user, lesson=leccion
+        ).aggregate(total=models.Sum('score'))['total'] or 0
+        titulo = f"Lección: {leccion.title}"
+        slug = f"leccion-{leccion.id}"
+    elif curso_slug:
+        curso = get_object_or_404(Course, slug=curso_slug, is_active=True)
+        lecciones = curso.lessons.filter(is_active=True)
+        total_ejercicios = sum(l.exercises.count() for l in lecciones)
+        completados = UserProgress.objects.filter(
+            user=user, lesson__course=curso, completed=True
+        ).count()
+        puntuacion = UserProgress.objects.filter(
+            user=user, lesson__course=curso
+        ).aggregate(total=models.Sum('score'))['total'] or 0
+        titulo = f"Curso: {curso.name}"
+        slug = curso_slug
+        leccion = None
+    else:
+        return HttpResponse("No se especificó lección o curso", status=400)
+    
+    # Calcular porcentaje
+    porcentaje = int((completados / total_ejercicios * 100)) if total_ejercicios > 0 else 0
+    
+    # Verificar si ya existe un certificado
+    certificado, creado = Certificado.objects.get_or_create(
+        usuario=user,
+        curso=curso,
+        leccion=leccion,
+        defaults={
+            'titulo': titulo,
+            'puntuacion': puntuacion,
+            'ejercicios_completados': completados,
+            'total_ejercicios': total_ejercicios,
+            'porcentaje': porcentaje,
+            'codigo_verificacion': f"VECTOR-{uuid.uuid4().hex[:8].upper()}-{uuid.uuid4().hex[:4].upper()}"
+        }
+    )
+    
+    if not creado:
+        # Actualizar datos existentes
+        certificado.puntuacion = puntuacion
+        certificado.ejercicios_completados = completados
+        certificado.total_ejercicios = total_ejercicios
+        certificado.porcentaje = porcentaje
+        certificado.save()
+    
+    # Generar PDF
+    pdf = generar_pdf_certificado(
+        user=user,
+        titulo=titulo,
+        curso=curso,
+        completados=completados,
+        total_ejercicios=total_ejercicios,
+        porcentaje=porcentaje,
+        puntuacion=puntuacion,
+        codigo=certificado.codigo_verificacion,
+        fecha=certificado.fecha_emision
+    )
+    
+    response = HttpResponse(pdf, content_type='application/pdf')
+    response['Content-Disposition'] = f'inline; filename="certificado_{slug}_{user.username}.pdf"'
+    return response
+
+def generar_pdf_certificado(user, titulo, curso, completados, total_ejercicios, porcentaje, puntuacion, codigo, fecha):
+    """Genera el PDF del certificado"""
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=landscape(A4),
+        topMargin=1*cm,
+        bottomMargin=1*cm,
+        leftMargin=1.5*cm,
+        rightMargin=1.5*cm
+    )
+    
+    styles = getSampleStyleSheet()
+    
+    # Estilos personalizados
+    style_titulo = ParagraphStyle(
+        'Titulo',
+        parent=styles['Heading1'],
+        fontSize=36,
+        textColor=colors.HexColor('#00f0ff'),
+        alignment=TA_CENTER,
+        spaceAfter=0.5*cm
+    )
+    
+    style_subtitulo = ParagraphStyle(
+        'Subtitulo',
+        parent=styles['Heading2'],
+        fontSize=18,
+        textColor=colors.HexColor('#b000ff'),
+        alignment=TA_CENTER,
+        spaceAfter=1*cm
+    )
+    
+    style_nombre = ParagraphStyle(
+        'Nombre',
+        parent=styles['Heading1'],
+        fontSize=42,
+        textColor=colors.HexColor('#ffffff'),
+        alignment=TA_CENTER,
+        spaceAfter=0.8*cm,
+        fontName='Helvetica-Bold'
+    )
+    
+    style_texto = ParagraphStyle(
+        'Texto',
+        parent=styles['Normal'],
+        fontSize=14,
+        textColor=colors.HexColor('#e0e0ff'),
+        alignment=TA_CENTER,
+        spaceAfter=0.3*cm
+    )
+    
+    style_codigo = ParagraphStyle(
+        'Codigo',
+        parent=styles['Normal'],
+        fontSize=10,
+        textColor=colors.HexColor('#666688'),
+        alignment=TA_CENTER
+    )
+    
+    # Generar elementos del PDF
+    story = []
+    
+    # Título
+    story.append(Paragraph("📜 CERTIFICADO DE FINALIZACIÓN", style_titulo))
+    story.append(Spacer(1, 0.3*cm))
+    
+    # Subtítulo
+    story.append(Paragraph(f"<b>{titulo}</b>", style_subtitulo))
+    story.append(Spacer(1, 0.5*cm))
+    
+    # Nombre del usuario
+    story.append(Paragraph(f"<b>{user.get_full_name() or user.username}</b>", style_nombre))
+    story.append(Spacer(1, 0.5*cm))
+    
+    # Texto de certificación
+    texto_cert = f"""
+    Ha completado satisfactoriamente el programa de aprendizaje<br/>
+    con un <b>{porcentaje}%</b> de ejercicios correctamente resueltos<br/>
+    (<b>{completados}</b> de <b>{total_ejercicios}</b> ejercicios completados)<br/>
+    obteniendo una puntuación de <b>{puntuacion}</b> puntos.
+    """
+    story.append(Paragraph(texto_cert, style_texto))
+    story.append(Spacer(1, 0.5*cm))
+    
+    # Información del curso
+    if curso:
+        story.append(Paragraph(f"Curso: <b>{curso.name}</b>", style_texto))
+        story.append(Spacer(1, 0.3*cm))
+    
+    # Fecha
+    story.append(Paragraph(f"Fecha de emisión: {fecha.strftime('%d de %B de %Y')}", style_texto))
+    story.append(Spacer(1, 0.5*cm))
+    
+    # Código de verificación
+    story.append(Paragraph(f"Código de verificación: {codigo}", style_codigo))
+    story.append(Spacer(1, 0.3*cm))
+    
+    # Pie de página
+    story.append(Paragraph("El Archivo de Vector · Cronista Temporal", style_codigo))
+    
+    # Construir PDF
+    doc.build(story)
+    pdf = buffer.getvalue()
+    buffer.close()
+    return pdf
+
+# ===== CERTIFICADOS =====
+from django.http import HttpResponse
+from reportlab.lib.pagesizes import A4, landscape
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import cm
+from reportlab.lib.enums import TA_CENTER
+import uuid
+from django.db import models
+
+@login_required
+def generar_certificado(request, leccion_id=None, curso_slug=None):
+    """Genera un certificado en PDF para el usuario"""
+    user = request.user
+    
+    if leccion_id:
+        leccion = get_object_or_404(Lesson, id=leccion_id, is_active=True)
+        curso = leccion.course
+        ejercicios = leccion.exercises.filter(is_active=True)
+        total_ejercicios = ejercicios.count()
+        completados = UserProgress.objects.filter(
+            user=user, lesson=leccion, completed=True
+        ).count()
+        puntuacion = UserProgress.objects.filter(
+            user=user, lesson=leccion
+        ).aggregate(total=models.Sum('score'))['total'] or 0
+        titulo = f"Lección: {leccion.title}"
+        slug = f"leccion-{leccion.id}"
+    elif curso_slug:
+        curso = get_object_or_404(Course, slug=curso_slug, is_active=True)
+        lecciones = curso.lessons.filter(is_active=True)
+        total_ejercicios = sum(l.exercises.count() for l in lecciones)
+        completados = UserProgress.objects.filter(
+            user=user, lesson__course=curso, completed=True
+        ).count()
+        puntuacion = UserProgress.objects.filter(
+            user=user, lesson__course=curso
+        ).aggregate(total=models.Sum('score'))['total'] or 0
+        titulo = f"Curso: {curso.name}"
+        slug = curso_slug
+        leccion = None
+    else:
+        return HttpResponse("No se especificó lección o curso", status=400)
+    
+    porcentaje = int((completados / total_ejercicios * 100)) if total_ejercicios > 0 else 0
+    
+    # Verificar si ya existe un certificado
+    from core.models import Certificado
+    certificado, creado = Certificado.objects.get_or_create(
+        usuario=user,
+        curso=curso,
+        leccion=leccion,
+        defaults={
+            'titulo': titulo,
+            'puntuacion': puntuacion,
+            'ejercicios_completados': completados,
+            'total_ejercicios': total_ejercicios,
+            'porcentaje': porcentaje,
+            'codigo_verificacion': f"VECTOR-{uuid.uuid4().hex[:8].upper()}-{uuid.uuid4().hex[:4].upper()}"
+        }
+    )
+    
+    if not creado:
+        certificado.puntuacion = puntuacion
+        certificado.ejercicios_completados = completados
+        certificado.total_ejercicios = total_ejercicios
+        certificado.porcentaje = porcentaje
+        certificado.save()
+    
+    # Generar PDF
+    pdf = generar_pdf_certificado(
+        user=user,
+        titulo=titulo,
+        curso=curso,
+        completados=completados,
+        total_ejercicios=total_ejercicios,
+        porcentaje=porcentaje,
+        puntuacion=puntuacion,
+        codigo=certificado.codigo_verificacion,
+        fecha=certificado.fecha_emision
+    )
+    
+    response = HttpResponse(pdf, content_type='application/pdf')
+    response['Content-Disposition'] = f'inline; filename="certificado_{slug}_{user.username}.pdf"'
+    return response
+
+def generar_pdf_certificado(user, titulo, curso, completados, total_ejercicios, porcentaje, puntuacion, codigo, fecha):
+    """Genera el PDF del certificado"""
+    from io import BytesIO
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=landscape(A4),
+        topMargin=1*cm,
+        bottomMargin=1*cm,
+        leftMargin=1.5*cm,
+        rightMargin=1.5*cm
+    )
+    
+    styles = getSampleStyleSheet()
+    
+    style_titulo = ParagraphStyle(
+        'Titulo',
+        parent=styles['Heading1'],
+        fontSize=36,
+        textColor=colors.HexColor('#00f0ff'),
+        alignment=TA_CENTER,
+        spaceAfter=0.5*cm
+    )
+    
+    style_subtitulo = ParagraphStyle(
+        'Subtitulo',
+        parent=styles['Heading2'],
+        fontSize=18,
+        textColor=colors.HexColor('#b000ff'),
+        alignment=TA_CENTER,
+        spaceAfter=1*cm
+    )
+    
+    style_nombre = ParagraphStyle(
+        'Nombre',
+        parent=styles['Heading1'],
+        fontSize=42,
+        textColor=colors.HexColor('#ffffff'),
+        alignment=TA_CENTER,
+        spaceAfter=0.8*cm,
+        fontName='Helvetica-Bold'
+    )
+    
+    style_texto = ParagraphStyle(
+        'Texto',
+        parent=styles['Normal'],
+        fontSize=14,
+        textColor=colors.HexColor('#e0e0ff'),
+        alignment=TA_CENTER,
+        spaceAfter=0.3*cm
+    )
+    
+    style_codigo = ParagraphStyle(
+        'Codigo',
+        parent=styles['Normal'],
+        fontSize=10,
+        textColor=colors.HexColor('#666688'),
+        alignment=TA_CENTER
+    )
+    
+    story = []
+    story.append(Paragraph("📜 CERTIFICADO DE FINALIZACIÓN", style_titulo))
+    story.append(Spacer(1, 0.3*cm))
+    story.append(Paragraph(f"<b>{titulo}</b>", style_subtitulo))
+    story.append(Spacer(1, 0.5*cm))
+    story.append(Paragraph(f"<b>{user.get_full_name() or user.username}</b>", style_nombre))
+    story.append(Spacer(1, 0.5*cm))
+    
+    texto_cert = f"""
+    Ha completado satisfactoriamente el programa de aprendizaje<br/>
+    con un <b>{porcentaje}%</b> de ejercicios correctamente resueltos<br/>
+    (<b>{completados}</b> de <b>{total_ejercicios}</b> ejercicios completados)<br/>
+    obteniendo una puntuación de <b>{puntuacion}</b> puntos.
+    """
+    story.append(Paragraph(texto_cert, style_texto))
+    story.append(Spacer(1, 0.5*cm))
+    
+    if curso:
+        story.append(Paragraph(f"Curso: <b>{curso.name}</b>", style_texto))
+        story.append(Spacer(1, 0.3*cm))
+    
+    story.append(Paragraph(f"Fecha de emisión: {fecha.strftime('%d de %B de %Y')}", style_texto))
+    story.append(Spacer(1, 0.5*cm))
+    story.append(Paragraph(f"Código de verificación: {codigo}", style_codigo))
+    story.append(Spacer(1, 0.3*cm))
+    story.append(Paragraph("El Archivo de Vector · Cronista Temporal", style_codigo))
+    
+    doc.build(story)
+    pdf = buffer.getvalue()
+    buffer.close()
+    return pdf
