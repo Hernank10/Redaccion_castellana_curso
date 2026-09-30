@@ -3,11 +3,13 @@ import os
 import re
 import json
 import sqlite3
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 print("📚 EXTRAYENDO TÉCNICAS DE HTMLs COMO EJERCICIOS")
 print("=" * 60)
 
-conn = sqlite3.connect('db.sqlite3')
+conn = sqlite3.connect(str(BASE_DIR / 'db.sqlite3'))
 cursor = conn.cursor()
 
 # RUTAS ACTUALIZADAS

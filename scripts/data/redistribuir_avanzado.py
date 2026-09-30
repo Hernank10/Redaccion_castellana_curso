@@ -7,12 +7,14 @@ basado en palabras clave más amplias.
 """
 
 import sqlite3
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 import re
 
 print("📚 Redistribuyendo técnicas de 'general' a cursos específicos...")
 print("=" * 60)
 
-conn = sqlite3.connect('db.sqlite3')
+conn = sqlite3.connect(str(BASE_DIR / 'db.sqlite3'))
 cursor = conn.cursor()
 
 # Obtener cursos

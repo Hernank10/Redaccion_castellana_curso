@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import JsonResponse
 from django.urls import reverse
-from .models import Course, Lesson, Exercise, UserProgress, UserScore, UserStreak
+from .models import Course, Lesson, Exercise, UserProgress, UserScore, UserStreak, Inscripcion, Logro, Inscripcion, Logro
 import json
 
 # ===== VISTAS PÚBLICAS =====
@@ -37,6 +37,13 @@ def course_detail(request, course_slug):
                 'completed': prog.completed if prog else False,
                 'score': prog.score if prog else 0,
             }
+    # Crear inscripción si no existe
+    inscrito = False
+    if request.user.is_authenticated:
+        inscripcion, created = Inscripcion.objects.get_or_create(
+            user=request.user, course=course
+        )
+        inscrito = True
     return render(request, 'core/lesson_detail.html', {
         'course': course,
         'lessons': lessons,
@@ -108,26 +115,35 @@ def save_lesson_progress(request):
 
 @login_required
 def dashboard(request):
-    user_score = UserScore.objects.get_or_create(user=request.user)[0]
-    streak = UserStreak.objects.get_or_create(user=request.user)[0]
+    user_score, _ = UserScore.objects.get_or_create(user=request.user)
+    streak, _ = UserStreak.objects.get_or_create(user=request.user)
     progress_count = UserProgress.objects.filter(user=request.user, completed=True).count()
-    course_progress = {}
+
+    # Solo cursos en los que está inscrito
+    inscripciones = Inscripcion.objects.filter(user=request.user).select_related('course')
+    course_progress = []
     total_lessons = 0
     completed_lessons = 0
-    for course in Course.objects.filter(is_active=True):
+
+    for insc in inscripciones:
+        course = insc.course
         total = course.lessons.count()
         completed = UserProgress.objects.filter(
             user=request.user, lesson__course=course, completed=True
         ).count()
-        course_progress[course.id] = {
-            'name': course.name,
-            'icon': course.icon,
+        porcentaje = round((completed / total * 100) if total > 0 else 0)
+        course_progress.append({
+            'course': course,
             'total': total,
             'completed': completed,
-            'percentage': round((completed / total * 100) if total > 0 else 0),
-        }
+            'percentage': porcentaje,
+        })
         total_lessons += total
         completed_lessons += completed
+
+    logros = Logro.objects.filter(user=request.user)
+    certificados = Certificado.objects.filter(user=request.user)
+
     return render(request, 'core/dashboard.html', {
         'user_score': user_score,
         'streak': streak,
@@ -135,6 +151,9 @@ def dashboard(request):
         'course_progress': course_progress,
         'total_lessons': total_lessons,
         'completed_lessons': completed_lessons,
+        'logros': logros,
+        'certificados': certificados,
+        'inscripciones_count': inscripciones.count(),
     })
 
 def practice_lesson(request, lesson_id):
@@ -614,13 +633,13 @@ def generar_pdf_certificado(user, titulo, curso, completados, total_ejercicios, 
 
 
 def course_list(request):
-    from .models import Course
+    from .models import Course, Inscripcion, Logro, Inscripcion, Logro
     cursos = Course.objects.filter(is_active=True).order_by('order')
     return render(request, 'core/course_list.html', {'cursos': cursos})
 
 
 def resource_list(request):
-    from .models import Lesson
+    from .models import Lesson, Inscripcion, Logro, Inscripcion, Logro
     recursos = Lesson.objects.filter(is_active=True).select_related('course').order_by('course__order', 'order')
     return render(request, 'core/resource_list.html', {'recursos': recursos})
 

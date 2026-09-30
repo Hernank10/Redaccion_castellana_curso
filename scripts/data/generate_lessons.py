@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import os
 import sqlite3
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 import random
 import re
 
@@ -8,7 +10,7 @@ print("🤖 GENERADOR AUTOMÁTICO DE LECCIONES")
 print("=" * 50)
 
 # Conectar a la base de datos
-conn = sqlite3.connect('db.sqlite3')
+conn = sqlite3.connect(str(BASE_DIR / 'db.sqlite3'))
 cursor = conn.cursor()
 
 # TEMPLATES POR CATEGORÍA

@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 import sqlite3
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 print("📚 Distribuyendo lecciones de 'Técnicas Generales'...")
 
-conn = sqlite3.connect('db.sqlite3')
+conn = sqlite3.connect(str(BASE_DIR / 'db.sqlite3'))
 cursor = conn.cursor()
 
 # Obtener el curso "Técnicas Generales"

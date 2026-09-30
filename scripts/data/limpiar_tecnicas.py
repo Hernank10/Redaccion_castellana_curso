@@ -6,12 +6,14 @@ Elimina lecciones que contienen código HTML/CSS/JS o plantillas Django.
 """
 
 import sqlite3
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 import re
 
 print("🧹 Limpiando lecciones corruptas...")
 print("=" * 60)
 
-conn = sqlite3.connect('db.sqlite3')
+conn = sqlite3.connect(str(BASE_DIR / 'db.sqlite3'))
 cursor = conn.cursor()
 
 # Patrones de corrupción

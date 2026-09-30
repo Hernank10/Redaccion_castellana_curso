@@ -152,3 +152,44 @@ class Certificado(models.Model):
         ordering = ['-fecha_emision']
         verbose_name = 'Certificado'
         verbose_name_plural = 'Certificados'
+class Inscripcion(models.Model):
+    """Curso al que se ha inscrito un usuario."""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='inscripciones')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='inscripciones')
+    fecha = models.DateTimeField(auto_now_add=True)
+    completado = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('user', 'course')
+        verbose_name = 'Inscripción'
+        verbose_name_plural = 'Inscripciones'
+
+    def __str__(self):
+        return f"{self.user.username} → {self.course.name}"
+
+
+class Logro(models.Model):
+    """Insignia o medalla desbloqueada por un usuario."""
+    TIPOS = [
+        ('insignia', 'Insignia'),
+        ('medalla', 'Medalla'),
+        ('estrella', 'Estrella'),
+    ]
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='logros')
+    tipo = models.CharField(max_length=20, choices=TIPOS, default='insignia')
+    nombre = models.CharField(max_length=100)
+    descripcion = models.TextField(blank=True)
+    icono = models.CharField(max_length=10, default='🏅')
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Logro'
+        verbose_name_plural = 'Logros'
+
+    def __str__(self):
+        return f"{self.user.username} - {self.nombre}"
+
+# ============================================================
+# MODELOS AÑADIDOS: Inscripcion + Logro
+# ============================================================
+

@@ -1,7 +1,9 @@
 import sqlite3
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 print("🔧 Reordenando todas las lecciones sin conflictos...")
-conn = sqlite3.connect('db.sqlite3')
+conn = sqlite3.connect(str(BASE_DIR / 'db.sqlite3'))
 cursor = conn.cursor()
 
 # Obtener todos los cursos
