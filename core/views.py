@@ -611,7 +611,6 @@ def generar_pdf_certificado(user, titulo, curso, completados, total_ejercicios, 
     pdf = buffer.getvalue()
     buffer.close()
     return pdf
-<<<<<<< HEAD
 
 
 def course_list(request):
@@ -645,5 +644,3 @@ def registro(request):
         messages.success(request, 'Cuenta creada. Ahora puedes iniciar sesion.')
         return redirect('login')
     return render(request, 'core/registro.html')
-=======
->>>>>>> 8da107e8327ec76e182bd9be7fe90b4d2adfd005

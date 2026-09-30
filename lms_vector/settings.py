@@ -19,10 +19,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-<<<<<<< HEAD
     'django.middleware.locale.LocaleMiddleware',
-=======
->>>>>>> 8da107e8327ec76e182bd9be7fe90b4d2adfd005
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -87,7 +84,6 @@ CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:8000',
     'https://*.preview.app.github.dev',
 ]
-<<<<<<< HEAD
 
 from django.utils.translation import gettext_lazy as _
 
@@ -111,5 +107,3 @@ LANGUAGES = [
 ]
 
 LOCALE_PATHS = [BASE_DIR / 'locale']
-=======
->>>>>>> 8da107e8327ec76e182bd9be7fe90b4d2adfd005

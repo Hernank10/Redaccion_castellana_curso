@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """actualizar_json.py - Anade cadenas faltantes al JSON."""
 import json
 import shutil
@@ -15,6 +15,28 @@ def backup(ruta):
 
 
 NUEVAS = {
+
+    "Cursos": {
+        "es": "Cursos", "en": "Courses",
+        "zh_Hans": "课程", "hi": "पाठ्यक्रम",
+        "ar": "الدورات", "fr": "Cours",
+        "pt": "Cursos", "ru": "Курсы",
+        "bn": "কোর্স", "ur": "کورسز",
+        "ja": "コース", "de": "Kurse",
+        "ko": "코스", "it": "Corsi",
+        "tr": "Kurslar", "vi": "Khóa học"
+    },
+    "Recursos": {
+        "es": "Recursos", "en": "Resources",
+        "zh_Hans": "资源", "hi": "संसाधन",
+        "ar": "الموارد", "fr": "Ressources",
+        "pt": "Recursos", "ru": "Ресурсы",
+        "bn": "সম্পদ", "ur": "وسائل",
+        "ja": "リソース", "de": "Ressourcen",
+        "ko": "리소스", "it": "Risorse",
+        "tr": "Kaynaklar", "vi": "Tài nguyên"
+    },
+
     "1000 técnicas de redacción": {
         "es": "1000 técnicas de redacción", "en": "1000 writing techniques",
         "zh_Hans": "1000 种写作技巧", "hi": "1000 लेखन तकनीकें",

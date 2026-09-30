@@ -970,5 +970,41 @@
     "it": "Cronista Temporale",
     "tr": "Zaman Tarihçisi",
     "vi": "Biên niên sử thời gian"
+  },
+  "Cursos": {
+    "es": "Cursos",
+    "en": "Courses",
+    "zh_Hans": "课程",
+    "hi": "पाठ्यक्रम",
+    "ar": "الدورات",
+    "fr": "Cours",
+    "pt": "Cursos",
+    "ru": "Курсы",
+    "bn": "কোর্স",
+    "ur": "کورسز",
+    "ja": "コース",
+    "de": "Kurse",
+    "ko": "코스",
+    "it": "Corsi",
+    "tr": "Kurslar",
+    "vi": "Khóa học"
+  },
+  "Recursos": {
+    "es": "Recursos",
+    "en": "Resources",
+    "zh_Hans": "资源",
+    "hi": "संसाधन",
+    "ar": "الموارد",
+    "fr": "Ressources",
+    "pt": "Recursos",
+    "ru": "Ресурсы",
+    "bn": "সম্পদ",
+    "ur": "وسائل",
+    "ja": "リソース",
+    "de": "Ressourcen",
+    "ko": "리소스",
+    "it": "Risorse",
+    "tr": "Kaynaklar",
+    "vi": "Tài nguyên"
   }
 }

@@ -101,12 +101,12 @@ msgstr "ホーム"
 #: .\templates\core\base.html:28 .\templates\core\course_list.html:3
 #: .\templates\core\course_list.html:7
 msgid "Cursos"
-msgstr ""
+msgstr "コース"
 
 #: .\templates\core\base.html:29 .\templates\core\resource_list.html:3
 #: .\templates\core\resource_list.html:7
 msgid "Recursos"
-msgstr ""
+msgstr "リソース"
 
 #: .\templates\core\base.html:31
 #, fuzzy

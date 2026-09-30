@@ -102,12 +102,12 @@ msgstr "الرئيسية"
 #: .\templates\core\base.html:28 .\templates\core\course_list.html:3
 #: .\templates\core\course_list.html:7
 msgid "Cursos"
-msgstr ""
+msgstr "الدورات"
 
 #: .\templates\core\base.html:29 .\templates\core\resource_list.html:3
 #: .\templates\core\resource_list.html:7
 msgid "Recursos"
-msgstr ""
+msgstr "الموارد"
 
 #: .\templates\core\base.html:31
 #, fuzzy

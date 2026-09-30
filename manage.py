@@ -1,28 +1,12 @@
-<<<<<<< HEAD
-﻿#!/usr/bin/env python
-"""Django's command-line utility for administrative tasks."""
-import os
-import sys
-
-# === PARCHE PYTHONPORTABLE ===
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-if BASE_DIR not in sys.path:
-    sys.path.insert(0, BASE_DIR)
-sys.path.insert(0, r"E:\PythonPortable_Django5\Lib\site-packages")
-# =============================
-
-=======
 #!/usr/bin/env python
 """Django's command-line utility for administrative tasks."""
-
 import os
 import sys
 
->>>>>>> 8da107e8327ec76e182bd9be7fe90b4d2adfd005
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "lms_vector.settings")
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'lms_vector.settings')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
@@ -34,9 +18,5 @@ def main():
     execute_from_command_line(sys.argv)
 
 
-if __name__ == "__main__":
-<<<<<<< HEAD
+if __name__ == '__main__':
     main()
-=======
-    main()
->>>>>>> 8da107e8327ec76e182bd9be7fe90b4d2adfd005
