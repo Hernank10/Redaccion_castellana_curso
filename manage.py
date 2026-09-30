@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿#!/usr/bin/env python
 """Django's command-line utility for administrative tasks."""
 import os
@@ -10,6 +11,14 @@ if BASE_DIR not in sys.path:
 sys.path.insert(0, r"E:\PythonPortable_Django5\Lib\site-packages")
 # =============================
 
+=======
+#!/usr/bin/env python
+"""Django's command-line utility for administrative tasks."""
+
+import os
+import sys
+
+>>>>>>> 8da107e8327ec76e182bd9be7fe90b4d2adfd005
 
 def main():
     """Run administrative tasks."""
@@ -26,4 +35,8 @@ def main():
 
 
 if __name__ == "__main__":
+<<<<<<< HEAD
     main()
+=======
+    main()
+>>>>>>> 8da107e8327ec76e182bd9be7fe90b4d2adfd005

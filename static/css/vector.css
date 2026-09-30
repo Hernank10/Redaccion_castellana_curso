@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ﻿:root {
+=======
+:root {
+>>>>>>> 8da107e8327ec76e182bd9be7fe90b4d2adfd005
     --bg-primary: #0a0a12;
     --bg-secondary: #111122;
     --cyan: #00f0ff;
@@ -352,6 +356,7 @@ body {
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-primary); }
 ::-webkit-scrollbar-thumb { background: var(--violet); border-radius: 8px; box-shadow: var(--violet-glow); }
+<<<<<<< HEAD
 
 /* ============================================================
    SELECTOR DE IDIOMAS (i18n)
@@ -384,3 +389,5 @@ body {
     background: #1a1a2e;
     color: #fff;
 }
+=======
+>>>>>>> 8da107e8327ec76e182bd9be7fe90b4d2adfd005
