@@ -1,0 +1,66 @@
+﻿{% load i18n %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}{% trans "El Archivo de Vector" %} · LMS{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="{% static 'css/vector.css' %}" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="{% static 'js/vector.js' %}"></script>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{% url 'index' %}" class="nav-brand">
+                <span class="brand-icon">⌛</span>
+                <span class="brand-text">{% trans "Archivo de Vector" %}</span>
+            </a>
+
+            <div class="nav-links">
+                <a href="{% url 'index' %}"><i class="fas fa-home"></i> {% trans "Inicio" %}</a>
+                <a href="/cursos/"><i class="fas fa-book"></i> {% trans "Cursos" %}</a>
+                <a href="/recursos/"><i class="fas fa-folder-open"></i> {% trans "Recursos" %}</a
+                {% if user.is_authenticated %}
+                   <a href="{% url 'dashboard' %}"><i class="fas fa-chart-simple"></i> {% trans "Mi progreso" %}</a>
+                   {% if user.is_staff %}
+                       <a href="{% url 'teacher_dashboard' %}"><i class="fas fa-chalkboard-teacher"></i> {% trans "Profesor" %}</a>
+                   {% endif %}
+                   <span class="nav-user"><i class="fas fa-user"></i> {{ user.username }}</span>
+                   <a href="{% url 'logout' %}" class="nav-logout" title="{% trans 'Salir' %}"><i class="fas fa-sign-out-alt"></i></a>
+                {% else %}
+                  <a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> {% trans "Iniciar sesion" %}</a>
+                  <a href="{% url 'registro' %}"><i class="fas fa-user-plus"></i> {% trans "Registro" %}</a>
+                {% endif %}
+                <!-- SELECTOR DE IDIOMAS -->
+                <form action="{% url 'set_language' %}" method="post" class="lang-form">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value="{{ request.path }}">
+                    <select name="language" class="lang-select" onchange="this.form.submit()">
+                        {% get_current_language as CURRENT_LANG %}
+                        {% get_available_languages as AVAILABLE %}
+                        {% for code, name in AVAILABLE %}
+                            <option value="{{ code }}" {% if code == CURRENT_LANG %}selected{% endif %}>{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">{% block content %}{% endblock %}</main>
+
+    <footer class="footer">
+        <p>{% trans "El Archivo de Vector" %} · {% trans "Cronista Temporal" %} · {% trans "1000 técnicas de redacción" %}</p>
+        <p class="footer-version">v2.0 · LMS con Django + SQLite</p>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

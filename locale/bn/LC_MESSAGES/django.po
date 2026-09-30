@@ -1,0 +1,225 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-30 09:37-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\lms_vector\settings.py:91
+msgid "es"
+msgstr ""
+
+#: .\lms_vector\settings.py:92
+msgid "en"
+msgstr ""
+
+#: .\lms_vector\settings.py:93
+msgid "zh_Hans"
+msgstr ""
+
+#: .\lms_vector\settings.py:94
+msgid "hi"
+msgstr ""
+
+#: .\lms_vector\settings.py:95
+msgid "ar"
+msgstr ""
+
+#: .\lms_vector\settings.py:96
+msgid "fr"
+msgstr ""
+
+#: .\lms_vector\settings.py:97
+msgid "pt"
+msgstr ""
+
+#: .\lms_vector\settings.py:98
+msgid "ru"
+msgstr ""
+
+#: .\lms_vector\settings.py:99
+msgid "bn"
+msgstr ""
+
+#: .\lms_vector\settings.py:100
+msgid "ur"
+msgstr ""
+
+#: .\lms_vector\settings.py:101
+msgid "ja"
+msgstr ""
+
+#: .\lms_vector\settings.py:102
+msgid "de"
+msgstr ""
+
+#: .\lms_vector\settings.py:103
+msgid "ko"
+msgstr ""
+
+#: .\lms_vector\settings.py:104
+msgid "it"
+msgstr ""
+
+#: .\lms_vector\settings.py:105
+msgid "tr"
+msgstr ""
+
+#: .\lms_vector\settings.py:106
+msgid "vi"
+msgstr ""
+
+#: .\templates\core\base.html:8 .\templates\core\base.html:60
+#: .\templates\core\course_detail.html:3 .\templates\core\course_list.html:3
+#: .\templates\core\resource_list.html:3
+#, fuzzy
+#| msgid "Archivo de Vector"
+msgid "El Archivo de Vector"
+msgstr "ভেক্টর আর্কাইভ"
+
+#: .\templates\core\base.html:23
+msgid "Archivo de Vector"
+msgstr "ভেক্টর আর্কাইভ"
+
+#: .\templates\core\base.html:27
+msgid "Inicio"
+msgstr "হোম"
+
+#: .\templates\core\base.html:28 .\templates\core\course_list.html:3
+#: .\templates\core\course_list.html:7
+msgid "Cursos"
+msgstr ""
+
+#: .\templates\core\base.html:29 .\templates\core\resource_list.html:3
+#: .\templates\core\resource_list.html:7
+msgid "Recursos"
+msgstr ""
+
+#: .\templates\core\base.html:31
+#, fuzzy
+#| msgid "Progreso"
+msgid "Mi progreso"
+msgstr "অগ্রগতি"
+
+#: .\templates\core\base.html:33
+msgid "Profesor"
+msgstr "শিক্ষক"
+
+#: .\templates\core\base.html:36
+msgid "Salir"
+msgstr "লগ আউট"
+
+#: .\templates\core\base.html:38 .\templates\core\login.html:3
+#: .\templates\core\login.html:7
+#, fuzzy
+#| msgid "Inicio"
+msgid "Iniciar sesion"
+msgstr "হোম"
+
+#: .\templates\core\base.html:39 .\templates\core\registro.html:3
+msgid "Registro"
+msgstr "সাইন আপ"
+
+#: .\templates\core\base.html:60
+msgid "Cronista Temporal"
+msgstr "সময়ের ক্রনিকলার"
+
+#: .\templates\core\base.html:60
+msgid "1000 técnicas de redacción"
+msgstr "1000টি লেখার কৌশল"
+
+#: .\templates\core\course_detail.html:7
+msgid "Volver a Cursos"
+msgstr "কোর্সে ফিরে যান"
+
+#: .\templates\core\course_detail.html:14 .\templates\core\course_list.html:19
+msgid "lecciones"
+msgstr "পাঠ"
+
+#: .\templates\core\course_detail.html:17
+msgid "Inscribirse al curso"
+msgstr "কোর্সে ভর্তি হন"
+
+#: .\templates\core\course_detail.html:20
+msgid "Lecciones"
+msgstr "পাঠ"
+
+#: .\templates\core\course_detail.html:29
+#: .\templates\core\resource_list.html:19
+msgid "Practicar"
+msgstr "অনুশীলন"
+
+#: .\templates\core\course_detail.html:33
+msgid "No hay lecciones disponibles"
+msgstr "কোনও পাঠ উপলব্ধ নেই"
+
+#: .\templates\core\course_list.html:10
+msgid "Explora los cursos disponibles"
+msgstr "উপলব্ধ কোর্সগুলি অন্বেষণ করুন"
+
+#: .\templates\core\course_list.html:22
+msgid "Inscribirse"
+msgstr "ভর্তি হন"
+
+#: .\templates\core\course_list.html:26
+msgid "No hay cursos disponibles"
+msgstr "কোনও কোর্স উপলব্ধ নেই"
+
+#: .\templates\core\login.html:12 .\templates\core\registro.html:19
+msgid "Usuario"
+msgstr "ব্যবহারকারী"
+
+#: .\templates\core\login.html:16 .\templates\core\registro.html:27
+msgid "Contrasena"
+msgstr "পাসওয়ার্ড"
+
+#: .\templates\core\login.html:20
+msgid "Entrar"
+msgstr "লগ ইন"
+
+#: .\templates\core\login.html:24
+msgid "No tienes cuenta?"
+msgstr "অ্যাকাউন্ট নেই?"
+
+#: .\templates\core\login.html:24
+msgid "Registrate"
+msgstr "নিবন্ধন করুন"
+
+#: .\templates\core\registro.html:7 .\templates\core\registro.html:31
+msgid "Crear cuenta"
+msgstr "অ্যাকাউন্ট তৈরি করুন"
+
+#: .\templates\core\registro.html:23
+msgid "Correo electronico"
+msgstr "ইমেল"
+
+#: .\templates\core\registro.html:35
+msgid "Ya tienes cuenta?"
+msgstr "ইতিমধ্যে একটি অ্যাকাউন্ট আছে?"
+
+#: .\templates\core\registro.html:35
+#, fuzzy
+#| msgid "Inicio"
+msgid "Inicia sesion"
+msgstr "হোম"
+
+#: .\templates\core\resource_list.html:10
+msgid "Todos los recursos disponibles"
+msgstr "সমস্ত উপলব্ধ সম্পদ"
+
+#: .\templates\core\resource_list.html:23
+msgid "No hay recursos disponibles"
+msgstr "কোনও সম্পদ উপলব্ধ নেই"

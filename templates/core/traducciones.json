@@ -1,0 +1,420 @@
+﻿{
+  "Inicio": {
+    "es": "Inicio", "en": "Home", "zh_Hans": "首页",
+    "hi": "होम", "ar": "الرئيسية", "fr": "Accueil",
+    "pt": "Início", "ru": "Главная", "bn": "হোম",
+    "ur": "ہوم", "ja": "ホーム", "de": "Startseite",
+    "ko": "홈", "it": "Home", "tr": "Ana Sayfa",
+    "vi": "Trang chủ"
+  },
+  "Progreso": {
+    "es": "Progreso", "en": "Progress", "zh_Hans": "进度",
+    "hi": "प्रगति", "ar": "التقدم", "fr": "Progrès",
+    "pt": "Progresso", "ru": "Прогресс", "bn": "অগ্রগতি",
+    "ur": "پیش رفت", "ja": "進捗", "de": "Fortschritt",
+    "ko": "진행 상황", "it": "Progresso", "tr": "İlerleme",
+    "vi": "Tiến độ"
+  },
+  "Profesor": {
+    "es": "Profesor", "en": "Teacher", "zh_Hans": "教师",
+    "hi": "शिक्षक", "ar": "مدرس", "fr": "Enseignant",
+    "pt": "Professor", "ru": "Учитель", "bn": "শিক্ষক",
+    "ur": "استاد", "ja": "教師", "de": "Lehrer",
+    "ko": "교사", "it": "Insegnante", "tr": "Öğretmen",
+    "vi": "Giáo viên"
+  },
+  "Dashboard": {
+    "es": "Panel", "en": "Dashboard", "zh_Hans": "仪表板",
+    "hi": "डैशबोर्ड", "ar": "لوحة التحكم", "fr": "Tableau de bord",
+    "pt": "Painel", "ru": "Панель", "bn": "ড্যাশবোর্ড",
+    "ur": "ڈیش بورڈ", "ja": "ダッシュボード", "de": "Dashboard",
+    "ko": "대시보드", "it": "Dashboard", "tr": "Panel",
+    "vi": "Bảng điều khiển"
+  },
+  "Panel": {
+    "es": "Panel", "en": "Panel", "zh_Hans": "面板",
+    "hi": "पैनल", "ar": "لوحة", "fr": "Panneau",
+    "pt": "Painel", "ru": "Панель", "bn": "প্যানেল",
+    "ur": "پینل", "ja": "パネル", "de": "Panel",
+    "ko": "패널", "it": "Pannello", "tr": "Panel",
+    "vi": "Bảng"
+  },
+  "Archivo de Vector": {
+    "es": "Archivo de Vector", "en": "Vector Archive",
+    "zh_Hans": "矢量档案", "hi": "वेक्टर संग्रह",
+    "ar": "أرشيف المتجهات", "fr": "Archives Vector",
+    "pt": "Arquivo de Vetor", "ru": "Архив векторов",
+    "bn": "ভেক্টর আর্কাইভ", "ur": "ویکٹر آرکائیو",
+    "ja": "ベクターアーカイブ", "de": "Vektor-Archiv",
+    "ko": "벡터 아카이브", "it": "Archivio Vettoriale",
+    "tr": "Vektör Arşivi", "vi": "Kho lưu trữ Vector"
+  },
+  "Entrar": {
+    "es": "Entrar", "en": "Log in", "zh_Hans": "登录",
+    "hi": "लॉग इन", "ar": "تسجيل الدخول", "fr": "Connexion",
+    "pt": "Entrar", "ru": "Войти", "bn": "লগ ইন",
+    "ur": "لاگ ان", "ja": "ログイン", "de": "Anmelden",
+    "ko": "로그인", "it": "Accedi", "tr": "Giriş yap",
+    "vi": "Đăng nhập"
+  },
+  "Salir": {
+    "es": "Salir", "en": "Log out", "zh_Hans": "退出",
+    "hi": "लॉग आउट", "ar": "تسجيل الخروج", "fr": "Déconnexion",
+    "pt": "Sair", "ru": "Выйти", "bn": "লগ আউট",
+    "ur": "لاگ آؤٹ", "ja": "ログアウト", "de": "Abmelden",
+    "ko": "로그아웃", "it": "Esci", "tr": "Çıkış yap",
+    "vi": "Đăng xuất"
+  },
+  "Registrarse": {
+    "es": "Registrarse", "en": "Sign up", "zh_Hans": "注册",
+    "hi": "साइन अप", "ar": "التسجيل", "fr": "S'inscrire",
+    "pt": "Registrar-se", "ru": "Зарегистрироваться",
+    "bn": "সাইন আপ", "ur": "سائن اپ", "ja": "登録",
+    "de": "Registrieren", "ko": "가입", "it": "Registrati",
+    "tr": "Kayıt ol", "vi": "Đăng ký"
+  },
+  "Lecciones": {
+    "es": "Lecciones", "en": "Lessons", "zh_Hans": "课程",
+    "hi": "पाठ", "ar": "الدروس", "fr": "Leçons",
+    "pt": "Lições", "ru": "Уроки", "bn": "পাঠ",
+    "ur": "اسباق", "ja": "レッスン", "de": "Lektionen",
+    "ko": "레슨", "it": "Lezioni", "tr": "Dersler",
+    "vi": "Bài học"
+  },
+  "Ejercicios": {
+    "es": "Ejercicios", "en": "Exercises", "zh_Hans": "练习",
+    "hi": "अभ्यास", "ar": "التمارين", "fr": "Exercices",
+    "pt": "Exercícios", "ru": "Упражнения", "bn": "অনুশীলন",
+    "ur": "مشقیں", "ja": "演習", "de": "Übungen",
+    "ko": "연습", "it": "Esercizi", "tr": "Alıştırmalar",
+    "vi": "Bài tập"
+  },
+  "Curso": {
+    "es": "Curso", "en": "Course", "zh_Hans": "课程",
+    "hi": "पाठ्यक्रम", "ar": "دورة", "fr": "Cours",
+    "pt": "Curso", "ru": "Курс", "bn": "কোর্স",
+    "ur": "کورس", "ja": "コース", "de": "Kurs",
+    "ko": "강좌", "it": "Corso", "tr": "Kurs",
+    "vi": "Khóa học"
+  },
+  "Estudiante": {
+    "es": "Estudiante", "en": "Student", "zh_Hans": "学生",
+    "hi": "छात्र", "ar": "طالب", "fr": "Étudiant",
+    "pt": "Estudante", "ru": "Студент", "bn": "শিক্ষার্থী",
+    "ur": "طالب علم", "ja": "学生", "de": "Student",
+    "ko": "학생", "it": "Studente", "tr": "Öğrenci",
+    "vi": "Học sinh"
+  },
+  "Admin": {
+    "es": "Admin", "en": "Admin", "zh_Hans": "管理",
+    "hi": "व्यवस्थापक", "ar": "المسؤول", "fr": "Admin",
+    "pt": "Admin", "ru": "Админ", "bn": "অ্যাডমিন",
+    "ur": "ایڈمن", "ja": "管理者", "de": "Admin",
+    "ko": "관리자", "it": "Admin", "tr": "Yönetici",
+    "vi": "Quản trị viên"
+  },
+  "Bienvenido": {
+    "es": "Bienvenido", "en": "Welcome", "zh_Hans": "欢迎",
+    "hi": "स्वागत है", "ar": "مرحبًا", "fr": "Bienvenue",
+    "pt": "Bem-vindo", "ru": "Добро пожаловать",
+    "bn": "স্বাগতম", "ur": "خوش آمدید", "ja": "ようこそ",
+    "de": "Willkommen", "ko": "환영합니다", "it": "Benvenuto",
+    "tr": "Hoş geldiniz", "vi": "Chào mừng"
+  },
+  "Continuar": {
+    "es": "Continuar", "en": "Continue", "zh_Hans": "继续",
+    "hi": "जारी रखें", "ar": "متابعة", "fr": "Continuer",
+    "pt": "Continuar", "ru": "Продолжить", "bn": "চালিয়ে যান",
+    "ur": "جاری رکھیں", "ja": "続ける", "de": "Weiter",
+    "ko": "계속", "it": "Continua", "tr": "Devam et",
+    "vi": "Tiếp tục"
+  },
+  "Volver": {
+    "es": "Volver", "en": "Back", "zh_Hans": "返回",
+    "hi": "वापस", "ar": "رجوع", "fr": "Retour",
+    "pt": "Voltar", "ru": "Назад", "bn": "ফিরে যান",
+    "ur": "واپس", "ja": "戻る", "de": "Zurück",
+    "ko": "뒤로", "it": "Indietro", "tr": "Geri",
+    "vi": "Quay lại"
+  },
+  "Siguiente": {
+    "es": "Siguiente", "en": "Next", "zh_Hans": "下一个",
+    "hi": "अगला", "ar": "التالي", "fr": "Suivant",
+    "pt": "Próximo", "ru": "Далее", "bn": "পরবর্তী",
+    "ur": "اگلا", "ja": "次へ", "de": "Weiter",
+    "ko": "다음", "it": "Avanti", "tr": "Sonraki",
+    "vi": "Tiếp theo"
+  },
+  "Anterior": {
+    "es": "Anterior", "en": "Previous", "zh_Hans": "上一个",
+    "hi": "पिछला", "ar": "السابق", "fr": "Précédent",
+    "pt": "Anterior", "ru": "Назад", "bn": "পূর্ববর্তী",
+    "ur": "پچھلا", "ja": "前へ", "de": "Zurück",
+    "ko": "이전", "it": "Precedente", "tr": "Önceki",
+    "vi": "Trước"
+  },
+  "Guardar": {
+    "es": "Guardar", "en": "Save", "zh_Hans": "保存",
+    "hi": "सहेजें", "ar": "حفظ", "fr": "Enregistrer",
+    "pt": "Salvar", "ru": "Сохранить", "bn": "সংরক্ষণ করুন",
+    "ur": "محفوظ کریں", "ja": "保存", "de": "Speichern",
+    "ko": "저장", "it": "Salva", "tr": "Kaydet",
+    "vi": "Lưu"
+  },
+  "Cancelar": {
+    "es": "Cancelar", "en": "Cancel", "zh_Hans": "取消",
+    "hi": "रद्द करें", "ar": "إلغاء", "fr": "Annuler",
+    "pt": "Cancelar", "ru": "Отмена", "bn": "বাতিল করুন",
+    "ur": "منسوخ کریں", "ja": "キャンセル", "de": "Abbrechen",
+    "ko": "취소", "it": "Annulla", "tr": "İptal",
+    "vi": "Hủy"
+  },
+  "Enviar": {
+    "es": "Enviar", "en": "Submit", "zh_Hans": "提交",
+    "hi": "जमा करें", "ar": "إرسال", "fr": "Envoyer",
+    "pt": "Enviar", "ru": "Отправить", "bn": "জমা দিন",
+    "ur": "جمع کریں", "ja": "送信", "de": "Senden",
+    "ko": "제출", "it": "Invia", "tr": "Gönder",
+    "vi": "Gửi"
+  },
+  "Buscar": {
+    "es": "Buscar", "en": "Search", "zh_Hans": "搜索",
+    "hi": "खोजें", "ar": "بحث", "fr": "Rechercher",
+    "pt": "Pesquisar", "ru": "Поиск", "bn": "অনুসন্ধান করুন",
+    "ur": "تلاش کریں", "ja": "検索", "de": "Suchen",
+    "ko": "검색", "it": "Cerca", "tr": "Ara",
+    "vi": "Tìm kiếm"
+  },
+  "Mis cursos": {
+    "es": "Mis cursos", "en": "My courses", "zh_Hans": "我的课程",
+    "hi": "मेरे पाठ्यक्रम", "ar": "دوراتي", "fr": "Mes cours",
+    "pt": "Meus cursos", "ru": "Мои курсы", "bn": "আমার কোর্স",
+    "ur": "میرے کورسز", "ja": "マイコース", "de": "Meine Kurse",
+    "ko": "내 코스", "it": "I miei corsi", "tr": "Kurslarım",
+    "vi": "Khóa học của tôi"
+  },
+  "Mi progreso": {
+    "es": "Mi progreso", "en": "My progress", "zh_Hans": "我的进度",
+    "hi": "मेरी प्रगति", "ar": "تقدمي", "fr": "Mes progrès",
+    "pt": "Meu progresso", "ru": "Мой прогресс",
+    "bn": "আমার অগ্রগতি", "ur": "میری پیش رفت", "ja": "私の進捗",
+    "de": "Mein Fortschritt", "ko": "내 진행 상황",
+    "it": "I miei progressi", "tr": "İlerlemem",
+    "vi": "Tiến độ của tôi"
+  },
+  "Mis logros": {
+    "es": "Mis logros", "en": "My achievements",
+    "zh_Hans": "我的成就", "hi": "मेरी उपलब्धियाँ",
+    "ar": "إنجازاتي", "fr": "Mes réalisations",
+    "pt": "Minhas conquistas", "ru": "Мои достижения",
+    "bn": "আমার অর্জন", "ur": "میری کامیابیاں", "ja": "私の実績",
+    "de": "Meine Erfolge", "ko": "내 업적",
+    "it": "I miei obiettivi", "tr": "Başarılarım",
+    "vi": "Thành tích của tôi"
+  },
+  "Mis certificados": {
+    "es": "Mis certificados", "en": "My certificates",
+    "zh_Hans": "我的证书", "hi": "मेरे प्रमाणपत्र",
+    "ar": "شهاداتي", "fr": "Mes certificats",
+    "pt": "Meus certificados", "ru": "Мои сертификаты",
+    "bn": "আমার সার্টিফিকেট", "ur": "میرے سرٹیفکیٹ",
+    "ja": "私の証明書", "de": "Meine Zertifikate",
+    "ko": "내 인증서", "it": "I miei certificati",
+    "tr": "Sertifikalarım", "vi": "Chứng chỉ của tôi"
+  },
+  "Iniciar sesion": {
+    "es": "Iniciar sesión", "en": "Log in", "zh_Hans": "登录",
+    "hi": "लॉग इन", "ar": "تسجيل الدخول", "fr": "Connexion",
+    "pt": "Iniciar sessão", "ru": "Войти", "bn": "লগ ইন",
+    "ur": "لاگ ان", "ja": "ログイン", "de": "Anmelden",
+    "ko": "로그인", "it": "Accedi", "tr": "Giriş yap",
+    "vi": "Đăng nhập"
+  },
+  "Crear cuenta": {
+    "es": "Crear cuenta", "en": "Create account",
+    "zh_Hans": "创建账户", "hi": "खाता बनाएँ",
+    "ar": "إنشاء حساب", "fr": "Créer un compte",
+    "pt": "Criar conta", "ru": "Создать аккаунт",
+    "bn": "অ্যাকাউন্ট তৈরি করুন", "ur": "اکاؤنٹ بنائیں",
+    "ja": "アカウント作成", "de": "Konto erstellen",
+    "ko": "계정 만들기", "it": "Crea account",
+    "tr": "Hesap oluştur", "vi": "Tạo tài khoản"
+  },
+  "Cerrar sesion": {
+    "es": "Cerrar sesión", "en": "Log out", "zh_Hans": "退出登录",
+    "hi": "लॉग आउट", "ar": "تسجيل الخروج", "fr": "Déconnexion",
+    "pt": "Terminar sessão", "ru": "Выйти", "bn": "লগ আউট",
+    "ur": "لاگ آؤٹ", "ja": "ログアウト", "de": "Abmelden",
+    "ko": "로그아웃", "it": "Disconnetti", "tr": "Çıkış yap",
+    "vi": "Đăng xuất"
+  },
+  "Usuario": {
+    "es": "Usuario", "en": "User", "zh_Hans": "用户",
+    "hi": "उपयोगकर्ता", "ar": "المستخدم", "fr": "Utilisateur",
+    "pt": "Usuário", "ru": "Пользователь", "bn": "ব্যবহারকারী",
+    "ur": "صارف", "ja": "ユーザー", "de": "Benutzer",
+    "ko": "사용자", "it": "Utente", "tr": "Kullanıcı",
+    "vi": "Người dùng"
+  },
+  "Contrasena": {
+    "es": "Contraseña", "en": "Password", "zh_Hans": "密码",
+    "hi": "पासवर्ड", "ar": "كلمة المرور", "fr": "Mot de passe",
+    "pt": "Senha", "ru": "Пароль", "bn": "পাসওয়ার্ড",
+    "ur": "پاس ورڈ", "ja": "パスワード", "de": "Passwort",
+    "ko": "비밀번호", "it": "Password", "tr": "Şifre",
+    "vi": "Mật khẩu"
+  },
+  "Correo electronico": {
+    "es": "Correo electrónico", "en": "Email", "zh_Hans": "电子邮件",
+    "hi": "ईमेल", "ar": "البريد الإلكتروني", "fr": "E-mail",
+    "pt": "E-mail", "ru": "Электронная почта", "bn": "ইমেল",
+    "ur": "ای میل", "ja": "メールアドレス", "de": "E-Mail",
+    "ko": "이메일", "it": "Email", "tr": "E-posta",
+    "vi": "Email"
+  },
+  "Titulo": {
+    "es": "Título", "en": "Title", "zh_Hans": "标题",
+    "hi": "शीर्षक", "ar": "العنوان", "fr": "Titre",
+    "pt": "Título", "ru": "Заголовок", "bn": "শিরোনাম",
+    "ur": "عنوان", "ja": "タイトル", "de": "Titel",
+    "ko": "제목", "it": "Titolo", "tr": "Başlık",
+    "vi": "Tiêu đề"
+  },
+  "Descripcion": {
+    "es": "Descripción", "en": "Description", "zh_Hans": "描述",
+    "hi": "विवरण", "ar": "الوصف", "fr": "Description",
+    "pt": "Descrição", "ru": "Описание", "bn": "বিবরণ",
+    "ur": "تفصیل", "ja": "説明", "de": "Beschreibung",
+    "ko": "설명", "it": "Descrizione", "tr": "Açıklama",
+    "vi": "Mô tả"
+  },
+  "Nivel": {
+    "es": "Nivel", "en": "Level", "zh_Hans": "等级",
+    "hi": "स्तर", "ar": "المستوى", "fr": "Niveau",
+    "pt": "Nível", "ru": "Уровень", "bn": "স্তর",
+    "ur": "سطح", "ja": "レベル", "de": "Stufe",
+    "ko": "레벨", "it": "Livello", "tr": "Seviye",
+    "vi": "Cấp độ"
+  },
+  "Puntuacion": {
+    "es": "Puntuación", "en": "Score", "zh_Hans": "分数",
+    "hi": "स्कोर", "ar": "النتيجة", "fr": "Score",
+    "pt": "Pontuação", "ru": "Оценка", "bn": "স্কোর",
+    "ur": "اسکور", "ja": "スコア", "de": "Punktzahl",
+    "ko": "점수", "it": "Punteggio", "tr": "Puan",
+    "vi": "Điểm"
+  },  "Registro": {
+    "es": "Registro", "en": "Sign up", "zh_Hans": "注册",
+    "hi": "साइन अप", "ar": "التسجيل", "fr": "Inscription",
+    "pt": "Registro", "ru": "Регистрация", "bn": "সাইন আপ",
+    "ur": "رجسٹریشن", "ja": "登録", "de": "Registrieren",
+    "ko": "가입", "it": "Registrati", "tr": "Kayıt ol",
+    "vi": "Đăng ký"
+  },
+  "No tienes cuenta?": {
+    "es": "¿No tienes cuenta?", "en": "Don't have an account?",
+    "zh_Hans": "还没有账户？", "hi": "खाता नहीं है?",
+    "ar": "ليس لديك حساب؟", "fr": "Vous n'avez pas de compte ?",
+    "pt": "Não tem uma conta?", "ru": "Нет аккаунта?",
+    "bn": "অ্যাকাউন্ট নেই?", "ur": "اکاؤنٹ نہیں ہے؟",
+    "ja": "アカウントをお持ちでないですか？", "de": "Kein Konto?",
+    "ko": "계정이 없으신가요?", "it": "Non hai un account?",
+    "tr": "Hesabınız yok mu?", "vi": "Chưa có tài khoản?"
+  },
+  "Ya tienes cuenta?": {
+    "es": "¿Ya tienes cuenta?", "en": "Already have an account?",
+    "zh_Hans": "已有账户？", "hi": "क्या आपके पास पहले से खाता है?",
+    "ar": "هل لديك حساب بالفعل؟", "fr": "Vous avez déjà un compte ?",
+    "pt": "Já tem uma conta?", "ru": "Уже есть аккаунт?",
+    "bn": "ইতিমধ্যে একটি অ্যাকাউন্ট আছে?", "ur": "پہلے سے اکاؤنٹ ہے؟",
+    "ja": "すでにアカウントをお持ちですか？", "de": "Haben Sie schon ein Konto?",
+    "ko": "이미 계정이 있으신가요?", "it": "Hai già un account?",
+    "tr": "Zaten hesabınız var mı?", "vi": "Đã có tài khoản?"
+  },
+  "Registrate": {
+    "es": "Regístrate", "en": "Sign up", "zh_Hans": "注册",
+    "hi": "साइन अप करें", "ar": "سجل", "fr": "Inscrivez-vous",
+    "pt": "Registre-se", "ru": "Зарегистрируйтесь", "bn": "নিবন্ধন করুন",
+    "ur": "رجسٹر کریں", "ja": "登録する", "de": "Registrieren",
+    "ko": "가입하기", "it": "Registrati", "tr": "Kayıt ol",
+    "vi": "Đăng ký"
+  },
+  "Inicia sesion": {
+    "es": "Inicia sesión", "en": "Log in", "zh_Hans": "登录",
+    "hi": "लॉग इन करें", "ar": "تسجيل الدخول", "fr": "Connexion",
+    "pt": "Inicie sessão", "ru": "Войти", "bn": "লগ ইন করুন",
+    "ur": "لاگ ان کریں", "ja": "ログイン", "de": "Anmelden",
+    "ko": "로그인", "it": "Accedi", "tr": "Giriş yap",
+    "vi": "Đăng nhập"
+  },
+  "Volver a Cursos": {
+    "es": "Volver a Cursos", "en": "Back to Courses",
+    "zh_Hans": "返回课程", "hi": "पाठ्यक्रमों पर वापस",
+    "ar": "العودة إلى الدورات", "fr": "Retour aux cours",
+    "pt": "Voltar aos Cursos", "ru": "Назад к курсам",
+    "bn": "কোর্সে ফিরে যান", "ur": "کورسز پر واپس",
+    "ja": "コースに戻る", "de": "Zurück zu den Kursen",
+    "ko": "코스로 돌아가기", "it": "Torna ai corsi",
+    "tr": "Kurslara dön", "vi": "Quay lại khóa học"
+  },
+  "Inscribirse al curso": {
+    "es": "Inscribirse al curso", "en": "Enroll in course",
+    "zh_Hans": "报名参加课程", "hi": "कोर्स में नामांकन करें",
+    "ar": "التسجيل في الدورة", "fr": "S'inscrire au cours",
+    "pt": "Inscrever-se no curso", "ru": "Записаться на курс",
+    "bn": "কোর্সে ভর্তি হন", "ur": "کورس میں داخلہ لیں",
+    "ja": "コースに登録", "de": "Für den Kurs anmelden",
+    "ko": "코스 등록", "it": "Iscriviti al corso",
+    "tr": "Kursa kaydol", "vi": "Đăng ký khóa học"
+  },
+  "Explora los cursos disponibles": {
+    "es": "Explora los cursos disponibles", "en": "Explore available courses",
+    "zh_Hans": "探索可用课程", "hi": "उपलब्ध पाठ्यक्रमों का अन्वेषण करें",
+    "ar": "استكشف الدورات المتاحة", "fr": "Explorez les cours disponibles",
+    "pt": "Explore os cursos disponíveis", "ru": "Изучите доступные курсы",
+    "bn": "উপলব্ধ কোর্সগুলি অন্বেষণ করুন", "ur": "دستیاب کورسز کو دریافت کریں",
+    "ja": "利用可能なコースを探す", "de": "Verfügbare Kurse erkunden",
+    "ko": "사용 가능한 코스 탐색", "it": "Esplora i corsi disponibili",
+    "tr": "Mevcut kursları keşfet", "vi": "Khám phá các khóa học có sẵn"
+  },
+  "Todos los recursos disponibles": {
+    "es": "Todos los recursos disponibles", "en": "All available resources",
+    "zh_Hans": "所有可用资源", "hi": "सभी उपलब्ध संसाधन",
+    "ar": "جميع الموارد المتاحة", "fr": "Toutes les ressources disponibles",
+    "pt": "Todos os recursos disponíveis", "ru": "Все доступные ресурсы",
+    "bn": "সমস্ত উপলব্ধ সম্পদ", "ur": "تمام دستیاب وسائل",
+    "ja": "利用可能なすべてのリソース", "de": "Alle verfügbaren Ressourcen",
+    "ko": "사용 가능한 모든 리소스", "it": "Tutte le risorse disponibili",
+    "tr": "Mevcut tüm kaynaklar", "vi": "Tất cả tài nguyên có sẵn"
+  },
+  "No hay cursos disponibles": {
+    "es": "No hay cursos disponibles", "en": "No courses available",
+    "zh_Hans": "没有可用的课程", "hi": "कोई पाठ्यक्रम उपलब्ध नहीं",
+    "ar": "لا توجد دورات متاحة", "fr": "Aucun cours disponible",
+    "pt": "Nenhum curso disponível", "ru": "Нет доступных курсов",
+    "bn": "কোনও কোর্স উপলব্ধ নেই", "ur": "کوئی کورس دستیاب نہیں",
+    "ja": "利用可能なコースはありません", "de": "Keine Kurse verfügbar",
+    "ko": "사용 가능한 코스 없음", "it": "Nessun corso disponibile",
+    "tr": "Mevcut kurs yok", "vi": "Không có khóa học"
+  },
+  "No hay lecciones disponibles": {
+    "es": "No hay lecciones disponibles", "en": "No lessons available",
+    "zh_Hans": "没有可用的课程", "hi": "कोई पाठ उपलब्ध नहीं",
+    "ar": "لا توجد دروس متاحة", "fr": "Aucune leçon disponible",
+    "pt": "Nenhuma lição disponível", "ru": "Нет доступных уроков",
+    "bn": "কোনও পাঠ উপলব্ধ নেই", "ur": "کوئی سبق دستیاب نہیں",
+    "ja": "利用可能なレッスンはありません", "de": "Keine Lektionen verfügbar",
+    "ko": "사용 가능한 레슨 없음", "it": "Nessuna lezione disponibile",
+    "tr": "Mevcut ders yok", "vi": "Không có bài học"
+  },
+  "No hay recursos disponibles": {
+    "es": "No hay recursos disponibles", "en": "No resources available",
+    "zh_Hans": "没有可用的资源", "hi": "कोई संसाधन उपलब्ध नहीं",
+    "ar": "لا توجد موارد متاحة", "fr": "Aucune ressource disponible",
+    "pt": "Nenhum recurso disponível", "ru": "Нет доступных ресурсов",
+    "bn": "কোনও সম্পদ উপলব্ধ নেই", "ur": "کوئی وسیلہ دستیاب نہیں",
+    "ja": "利用可能なリソースはありません", "de": "Keine Ressourcen verfügbar",
+    "ko": "사용 가능한 리소스 없음", "it": "Nessuna risorsa disponibile",
+    "tr": "Mevcut kaynak yok", "vi": "Không có tài nguyên"
+  }
+}

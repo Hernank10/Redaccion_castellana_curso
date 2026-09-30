@@ -1,0 +1,27 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Dashboard del Profesor{% endblock %}
+
+{% block content %}
+<div style="max-width:1200px;margin:0 auto;">
+    <h1 style="font-family:'Orbitron',sans-serif;color:var(--text-cyan);">📚 Panel del Profesor</h1>
+    <p style="color:rgba(160,250,255,0.6);margin-bottom:2rem;">Gestiona cursos, lecciones y ejercicios.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem;">
+        {% for course in courses %}
+        <div style="background:var(--card-bg);border:var(--border-cyan);border-radius:16px;padding:1.5rem;">
+            <div style="font-size:2.5rem;margin-bottom:0.5rem;">{{ course.icon }}</div>
+            <h3 style="color:var(--text-cyan);">{{ course.name }}</h3>
+            <p style="color:rgba(160,250,255,0.5);font-size:0.9rem;">{{ course.lessons.count }} lecciones</p>
+            {% if course.lessons.first %}
+            <a href="{% url 'teacher_lesson_detail' course.lessons.first.id %}" style="display:inline-block;margin-top:0.8rem;background:rgba(176,0,255,0.15);color:var(--text-violet);padding:0.3rem 1.2rem;border-radius:30px;text-decoration:none;border:1px solid var(--border-violet);">
+                Ver lecciones →
+            </a>
+            {% endif %}
+        </div>
+        {% empty %}
+        <p style="color:rgba(160,250,255,0.5);">No hay cursos disponibles.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

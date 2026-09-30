@@ -1,0 +1,37 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Editar Lección - {{ lesson.title }}{% endblock %}
+
+{% block content %}
+<div style="max-width:1200px;margin:0 auto;">
+    <a href="{% url 'teacher_dashboard' %}" style="color:var(--text-cyan);text-decoration:none;">← Volver al panel</a>
+    <h1 style="font-family:'Orbitron',sans-serif;color:var(--text-cyan);">{{ lesson.title }}</h1>
+    <p style="color:rgba(160,250,255,0.5);">Curso: {{ lesson.course.name }} · {{ exercises.count }} ejercicios</p>
+
+    <div style="margin-top:1.5rem;">
+        <a href="{% url 'teacher_exercise_new' %}?lesson_id={{ lesson.id }}" style="background:rgba(0,240,255,0.1);color:var(--text-cyan);padding:0.4rem 1.5rem;border-radius:30px;text-decoration:none;border:1px solid var(--cyan);">
+            ➕ Añadir ejercicio
+        </a>
+    </div>
+
+    <div style="margin-top:2rem;display:grid;gap:1rem;">
+        {% for ex in exercises %}
+        <div style="background:var(--card-bg);border:1px solid rgba(0,240,255,0.06);border-radius:12px;padding:1.2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">
+            <div style="flex:1;min-width:200px;">
+                <div style="font-weight:600;color:var(--text-cyan);">{{ ex.question|truncatechars:80 }}</div>
+                <div style="font-size:0.8rem;color:rgba(160,250,255,0.5);">
+                    Tipo: {{ ex.get_exercise_type_display }} · Puntos: {{ ex.points }} · {% if ex.is_active %}✅ Activo{% else %}❌ Inactivo{% endif %}
+                </div>
+            </div>
+            <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
+                <a href="{% url 'teacher_exercise_edit' ex.id %}" style="background:rgba(176,0,255,0.15);color:var(--text-violet);padding:0.2rem 1rem;border-radius:20px;text-decoration:none;border:1px solid var(--border-violet);">✏️ Editar</a>
+                <a href="#" onclick="if(confirm('¿Eliminar este ejercicio?')){ document.getElementById('delete-form-{{ ex.id }}').submit(); }" style="background:rgba(255,0,100,0.1);color:#ff6b8a;padding:0.2rem 1rem;border-radius:20px;text-decoration:none;border:1px solid #ff6b8a;">🗑️</a>
+                <form id="delete-form-{{ ex.id }}" method="post" action="{% url 'teacher_exercise_delete' ex.id %}" style="display:none;">{% csrf_token %}</form>
+            </div>
+        </div>
+        {% empty %}
+        <p style="color:rgba(160,250,255,0.5);">No hay ejercicios para esta lección.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,225 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-30 09:37-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: .\lms_vector\settings.py:91
+msgid "es"
+msgstr ""
+
+#: .\lms_vector\settings.py:92
+msgid "en"
+msgstr ""
+
+#: .\lms_vector\settings.py:93
+msgid "zh_Hans"
+msgstr ""
+
+#: .\lms_vector\settings.py:94
+msgid "hi"
+msgstr ""
+
+#: .\lms_vector\settings.py:95
+msgid "ar"
+msgstr ""
+
+#: .\lms_vector\settings.py:96
+msgid "fr"
+msgstr ""
+
+#: .\lms_vector\settings.py:97
+msgid "pt"
+msgstr ""
+
+#: .\lms_vector\settings.py:98
+msgid "ru"
+msgstr ""
+
+#: .\lms_vector\settings.py:99
+msgid "bn"
+msgstr ""
+
+#: .\lms_vector\settings.py:100
+msgid "ur"
+msgstr ""
+
+#: .\lms_vector\settings.py:101
+msgid "ja"
+msgstr ""
+
+#: .\lms_vector\settings.py:102
+msgid "de"
+msgstr ""
+
+#: .\lms_vector\settings.py:103
+msgid "ko"
+msgstr ""
+
+#: .\lms_vector\settings.py:104
+msgid "it"
+msgstr ""
+
+#: .\lms_vector\settings.py:105
+msgid "tr"
+msgstr ""
+
+#: .\lms_vector\settings.py:106
+msgid "vi"
+msgstr ""
+
+#: .\templates\core\base.html:8 .\templates\core\base.html:60
+#: .\templates\core\course_detail.html:3 .\templates\core\course_list.html:3
+#: .\templates\core\resource_list.html:3
+#, fuzzy
+#| msgid "Archivo de Vector"
+msgid "El Archivo de Vector"
+msgstr "벡터 아카이브"
+
+#: .\templates\core\base.html:23
+msgid "Archivo de Vector"
+msgstr "벡터 아카이브"
+
+#: .\templates\core\base.html:27
+msgid "Inicio"
+msgstr "홈"
+
+#: .\templates\core\base.html:28 .\templates\core\course_list.html:3
+#: .\templates\core\course_list.html:7
+msgid "Cursos"
+msgstr ""
+
+#: .\templates\core\base.html:29 .\templates\core\resource_list.html:3
+#: .\templates\core\resource_list.html:7
+msgid "Recursos"
+msgstr ""
+
+#: .\templates\core\base.html:31
+#, fuzzy
+#| msgid "Progreso"
+msgid "Mi progreso"
+msgstr "진행 상황"
+
+#: .\templates\core\base.html:33
+msgid "Profesor"
+msgstr "교사"
+
+#: .\templates\core\base.html:36
+msgid "Salir"
+msgstr "로그아웃"
+
+#: .\templates\core\base.html:38 .\templates\core\login.html:3
+#: .\templates\core\login.html:7
+#, fuzzy
+#| msgid "Inicio"
+msgid "Iniciar sesion"
+msgstr "홈"
+
+#: .\templates\core\base.html:39 .\templates\core\registro.html:3
+msgid "Registro"
+msgstr "가입"
+
+#: .\templates\core\base.html:60
+msgid "Cronista Temporal"
+msgstr "시간 기록자"
+
+#: .\templates\core\base.html:60
+msgid "1000 técnicas de redacción"
+msgstr "1000가지 작문 기법"
+
+#: .\templates\core\course_detail.html:7
+msgid "Volver a Cursos"
+msgstr "코스로 돌아가기"
+
+#: .\templates\core\course_detail.html:14 .\templates\core\course_list.html:19
+msgid "lecciones"
+msgstr "레슨"
+
+#: .\templates\core\course_detail.html:17
+msgid "Inscribirse al curso"
+msgstr "코스 등록"
+
+#: .\templates\core\course_detail.html:20
+msgid "Lecciones"
+msgstr "레슨"
+
+#: .\templates\core\course_detail.html:29
+#: .\templates\core\resource_list.html:19
+msgid "Practicar"
+msgstr "연습"
+
+#: .\templates\core\course_detail.html:33
+msgid "No hay lecciones disponibles"
+msgstr "사용 가능한 레슨 없음"
+
+#: .\templates\core\course_list.html:10
+msgid "Explora los cursos disponibles"
+msgstr "사용 가능한 코스 탐색"
+
+#: .\templates\core\course_list.html:22
+msgid "Inscribirse"
+msgstr "등록"
+
+#: .\templates\core\course_list.html:26
+msgid "No hay cursos disponibles"
+msgstr "사용 가능한 코스 없음"
+
+#: .\templates\core\login.html:12 .\templates\core\registro.html:19
+msgid "Usuario"
+msgstr "사용자"
+
+#: .\templates\core\login.html:16 .\templates\core\registro.html:27
+msgid "Contrasena"
+msgstr "비밀번호"
+
+#: .\templates\core\login.html:20
+msgid "Entrar"
+msgstr "로그인"
+
+#: .\templates\core\login.html:24
+msgid "No tienes cuenta?"
+msgstr "계정이 없으신가요?"
+
+#: .\templates\core\login.html:24
+msgid "Registrate"
+msgstr "가입하기"
+
+#: .\templates\core\registro.html:7 .\templates\core\registro.html:31
+msgid "Crear cuenta"
+msgstr "계정 만들기"
+
+#: .\templates\core\registro.html:23
+msgid "Correo electronico"
+msgstr "이메일"
+
+#: .\templates\core\registro.html:35
+msgid "Ya tienes cuenta?"
+msgstr "이미 계정이 있으신가요?"
+
+#: .\templates\core\registro.html:35
+#, fuzzy
+#| msgid "Inicio"
+msgid "Inicia sesion"
+msgstr "홈"
+
+#: .\templates\core\resource_list.html:10
+msgid "Todos los recursos disponibles"
+msgstr "사용 가능한 모든 리소스"
+
+#: .\templates\core\resource_list.html:23
+msgid "No hay recursos disponibles"
+msgstr "사용 가능한 리소스 없음"
