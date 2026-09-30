@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
+r"""
 run.py - Wrapper para Python portable con ._pth (modo isolated).
 
 Uso:
@@ -8,7 +8,7 @@ Uso:
     E:\PythonPortable_Django5\python.exe run.py runserver 127.0.0.1:8007
     E:\PythonPortable_Django5\python.exe run.py migrate
     E:\PythonPortable_Django5\python.exe run.py shell
-"""
+r"""
 import os
 import sys
 

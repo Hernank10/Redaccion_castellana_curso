@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import JsonResponse
 from django.urls import reverse
-from .models import Course, Lesson, Exercise, UserProgress, UserScore, UserStreak, Inscripcion, Logro, Inscripcion, Logro
+from .models import Course, Lesson, Exercise, UserProgress, UserScore, UserStreak, Inscripcion, Logro, Certificado
 import json
 
 # ===== VISTAS PÚBLICAS =====
@@ -142,7 +142,7 @@ def dashboard(request):
         completed_lessons += completed
 
     logros = Logro.objects.filter(user=request.user)
-    certificados = Certificado.objects.filter(user=request.user)
+    certificados = Certificado.objects.filter(usuario=request.user)
 
     return render(request, 'core/dashboard.html', {
         'user_score': user_score,
@@ -633,13 +633,13 @@ def generar_pdf_certificado(user, titulo, curso, completados, total_ejercicios, 
 
 
 def course_list(request):
-    from .models import Course, Inscripcion, Logro, Inscripcion, Logro
+    from .models import Course, Inscripcion, Logro
     cursos = Course.objects.filter(is_active=True).order_by('order')
     return render(request, 'core/course_list.html', {'cursos': cursos})
 
 
 def resource_list(request):
-    from .models import Lesson, Inscripcion, Logro, Inscripcion, Logro
+    from .models import Lesson, Inscripcion, Logro
     recursos = Lesson.objects.filter(is_active=True).select_related('course').order_by('course__order', 'order')
     return render(request, 'core/resource_list.html', {'recursos': recursos})
 
@@ -663,3 +663,529 @@ def registro(request):
         messages.success(request, 'Cuenta creada. Ahora puedes iniciar sesion.')
         return redirect('login')
     return render(request, 'core/registro.html')
+
+
+@login_required
+def perfil(request):
+    """Pagina de perfil del estudiante."""
+    user = request.user
+    user_score, _ = UserScore.objects.get_or_create(user=user)
+    streak, _ = UserStreak.objects.get_or_create(user=user)
+    inscripciones = Inscripcion.objects.filter(user=user).count()
+    certificados = Certificado.objects.filter(usuario=user).count()
+    logros = Logro.objects.filter(user=user).count()
+    progreso = UserProgress.objects.filter(user=user, completed=True).count()
+    ultimos_logros = Logro.objects.filter(user=user).order_by("-fecha")[:5]
+    ultimos_certs = Certificado.objects.filter(usuario=user).order_by("-fecha_emision")[:3]
+
+    return render(request, 'core/perfil.html', {
+        'user_score': user_score,
+        'streak': streak,
+        'inscripciones_count': inscripciones,
+        'certificados_count': certificados,
+        'logros_count': logros,
+        'progreso_count': progreso,
+        'ultimos_logros': ultimos_logros,
+        'ultimos_certs': ultimos_certs,
+    })
+
+
+# ============================================================
+# CERTIFICADO PDF MEJORADO (estilo diploma)
+# ============================================================
+def generar_pdf_certificado_v2(user, titulo, curso, completados, total_ejercicios,
+                                 porcentaje, puntuacion, codigo, fecha):
+    """Genera un certificado PDF con diseño tipo diploma."""
+    from reportlab.lib.pagesizes import A4, landscape
+    from reportlab.pdfgen import canvas
+    from reportlab.lib.units import cm
+    from reportlab.lib.colors import HexColor, black, white
+    from io import BytesIO
+    import qrcode
+
+    buffer = BytesIO()
+    W, H = landscape(A4)  # 842 x 595
+    c = canvas.Canvas(buffer, pagesize=(W, H))
+
+    # Colores
+    dorado = HexColor("#C9A227")
+    azul_oscuro = HexColor("#0a0e27")
+    azul_claro = HexColor("#00d4ff")
+    gris = HexColor("#4a4a4a")
+
+    # === FONDO ===
+    c.setFillColor(azul_oscuro)
+    c.rect(0, 0, W, H, fill=1, stroke=0)
+
+    # Marco exterior dorado
+    c.setStrokeColor(dorado)
+    c.setLineWidth(6)
+    c.rect(20, 20, W-40, H-40, fill=0, stroke=1)
+
+    # Marco interior fino
+    c.setStrokeColor(dorado)
+    c.setLineWidth(1.5)
+    c.rect(30, 30, W-60, H-60, fill=0, stroke=1)
+
+    # Esquinas decorativas
+    c.setStrokeColor(dorado)
+    c.setLineWidth(3)
+    esquina = 40
+    # Superior izquierda
+    c.line(35, H-35-esquina, 35, H-35); c.line(35, H-35, 35+esquina, H-35)
+    # Superior derecha
+    c.line(W-35, H-35-esquina, W-35, H-35); c.line(W-35, H-35, W-35-esquina, H-35)
+    # Inferior izquierda
+    c.line(35, 35+esquina, 35, 35); c.line(35, 35, 35+esquina, 35)
+    # Inferior derecha
+    c.line(W-35, 35+esquina, W-35, 35); c.line(W-35, 35, W-35-esquina, 35)
+
+    # === ENCABEZADO ===
+    c.setFillColor(azul_claro)
+    c.setFont("Helvetica-Bold", 14)
+    c.drawCentredString(W/2, H-70, "⌛ ARCHIVO DE VECTOR")
+
+    c.setFillColor(dorado)
+    c.setFont("Helvetica", 10)
+    c.drawCentredString(W/2, H-88, "CRONISTA TEMPORAL · 1000 TÉCNICAS DE REDACCIÓN")
+
+    # Línea decorativa
+    c.setStrokeColor(dorado)
+    c.setLineWidth(1)
+    c.line(W/2-150, H-100, W/2+150, H-100)
+
+    # === TÍTULO ===
+    c.setFillColor(dorado)
+    c.setFont("Times-Bold", 38)
+    c.drawCentredString(W/2, H-150, "CERTIFICADO")
+
+    c.setFillColor(white)
+    c.setFont("Times-Italic", 14)
+    c.drawCentredString(W/2, H-172, "de finalización")
+
+    # === CUERPO ===
+    c.setFillColor(white)
+    c.setFont("Helvetica", 12)
+    c.drawCentredString(W/2, H-210, "Se otorga el presente certificado a")
+
+    # Nombre del estudiante
+    nombre = user.get_full_name() or user.username
+    c.setFillColor(azul_claro)
+    c.setFont("Times-BoldItalic", 32)
+    c.drawCentredString(W/2, H-255, nombre.upper())
+
+    # Línea bajo el nombre
+    ancho_nombre = c.stringWidth(nombre.upper(), "Times-BoldItalic", 32)
+    c.setStrokeColor(dorado)
+    c.setLineWidth(1)
+    c.line(W/2-ancho_nombre/2-20, H-262, W/2+ancho_nombre/2+20, H-262)
+
+    # Texto
+    c.setFillColor(white)
+    c.setFont("Helvetica", 12)
+    c.drawCentredString(W/2, H-290, "por haber completado satisfactoriamente el curso")
+
+    # Curso
+    c.setFillColor(dorado)
+    c.setFont("Times-Bold", 20)
+    curso_nombre = curso.name if hasattr(curso, 'name') else str(curso)
+    c.drawCentredString(W/2, H-320, curso_nombre)
+
+    # Estadísticas
+    c.setFillColor(white)
+    c.setFont("Helvetica", 11)
+    c.drawCentredString(W/2, H-345,
+        f"{completados} de {total_ejercicios} lecciones completadas · "
+        f"{porcentaje}% · {puntuacion} puntos")
+
+    # === FECHA Y FIRMA (abajo izquierda) ===
+    c.setFillColor(white)
+    c.setFont("Helvetica", 10)
+    fecha_str = fecha.strftime("%d de %B de %Y") if hasattr(fecha, 'strftime') else str(fecha)
+    c.drawString(80, 110, f"Fecha de emisión:")
+    c.setFillColor(dorado)
+    c.setFont("Helvetica-Bold", 11)
+    c.drawString(80, 95, fecha_str)
+
+    # Firma (abajo centro-derecha)
+    c.setStrokeColor(white)
+    c.setLineWidth(1)
+    c.line(W-250, 105, W-80, 105)
+    c.setFillColor(white)
+    c.setFont("Helvetica", 10)
+    c.drawCentredString(W-165, 90, "Dirección Académica")
+
+    # === CÓDIGO DE VERIFICACIÓN (arriba derecha) ===
+    c.setFillColor(dorado)
+    c.setFont("Helvetica-Bold", 8)
+    c.drawString(W-260, H-130, "CÓDIGO DE VERIFICACIÓN:")
+    c.setFillColor(white)
+    c.setFont("Courier", 9)
+    c.drawString(W-260, H-142, codigo)
+
+    # === QR (abajo derecha) ===
+    try:
+        qr = qrcode.QRCode(version=1, box_size=10, border=1)
+        qr.add_data(f"https://archivodevector.com/verificar/{codigo}")
+        qr.make(fit=True)
+        qr_img = qr.make_image(fill_color="black", back_color="white")
+        qr_buffer = BytesIO()
+        qr_img.save(qr_buffer, format="PNG")
+        qr_buffer.seek(0)
+        from reportlab.lib.utils import ImageReader
+        c.drawImage(ImageReader(qr_buffer), W-130, 55, width=70, height=70)
+        c.setFillColor(gris)
+        c.setFont("Helvetica", 7)
+        c.drawCentredString(W-95, 48, "Escanear para verificar")
+    except Exception as e:
+        pass
+
+    # Pie de página
+    c.setFillColor(gris)
+    c.setFont("Helvetica", 8)
+    c.drawCentredString(W/2, 45, "Este certificado puede verificarse en archivodevector.com con el código indicado")
+
+    c.showPage()
+    c.save()
+    buffer.seek(0)
+    return buffer
+
+
+# ============================================================
+# CERTIFICADO WORD
+# ============================================================
+def generar_docx_certificado(user, titulo, curso, completados, total_ejercicios,
+                              porcentaje, puntuacion, codigo, fecha):
+    """Genera un certificado Word (.docx) con diseño."""
+    from io import BytesIO
+
+    try:
+        from docx import Document
+        from docx.shared import Pt, Cm, RGBColor
+        from docx.enum.text import WD_ALIGN_PARAGRAPH
+        from docx.enum.section import WD_ORIENT
+    except ImportError:
+        raise ImportError("Instala python-docx: pip install python-docx")
+
+    doc = Document()
+
+    # Configurar página horizontal
+    section = doc.sections[0]
+    section.orientation = WD_ORIENT.LANDSCAPE
+    section.page_width, section.page_height = section.page_height, section.page_width
+
+    # Márgenes
+    for m in ["top_margin", "bottom_margin", "left_margin", "right_margin"]:
+        setattr(section, m, Cm(2))
+
+    def add_centered(text, size, bold=False, italic=False, color=None, font="Calibri"):
+        p = doc.add_paragraph()
+        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        run = p.add_run(text)
+        run.font.size = Pt(size)
+        run.font.bold = bold
+        run.font.italic = italic
+        run.font.name = font
+        if color:
+            run.font.color.rgb = RGBColor(*color)
+        return p
+
+    # Encabezado
+    add_centered("⌛ ARCHIVO DE VECTOR", 14, bold=True, color=(0, 212, 255))
+    add_centered("CRONISTA TEMPORAL · 1000 TÉCNICAS DE REDACCIÓN", 10, color=(120, 120, 120))
+
+    doc.add_paragraph()
+
+    # Título
+    add_centered("CERTIFICADO", 40, bold=True, color=(201, 162, 39), font="Times New Roman")
+    add_centered("de finalización", 14, italic=True, font="Times New Roman")
+
+    doc.add_paragraph()
+    add_centered("Se otorga el presente certificado a", 12)
+
+    # Nombre
+    nombre = user.get_full_name() or user.username
+    add_centered(nombre.upper(), 32, bold=True, italic=True,
+                 color=(0, 150, 200), font="Times New Roman")
+
+    doc.add_paragraph()
+    add_centered("por haber completado satisfactoriamente el curso", 12)
+
+    curso_nombre = curso.name if hasattr(curso, 'name') else str(curso)
+    add_centered(curso_nombre, 20, bold=True, color=(201, 162, 39),
+                 font="Times New Roman")
+
+    doc.add_paragraph()
+    add_centered(f"{completados} de {total_ejercicios} lecciones completadas · {porcentaje}% · {puntuacion} puntos", 11)
+
+    doc.add_paragraph()
+    doc.add_paragraph()
+
+    # Pie con tabla de 3 columnas
+    table = doc.add_table(rows=1, cols=3)
+    table.autofit = True
+
+    # Columna 1: fecha
+    cell = table.cell(0, 0)
+    cell.text = ""
+    p = cell.paragraphs[0]
+    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run = p.add_run("Fecha de emisión\n")
+    run.font.size = Pt(10)
+    run.font.color.rgb = RGBColor(120, 120, 120)
+    fecha_str = fecha.strftime("%d/%m/%Y") if hasattr(fecha, 'strftime') else str(fecha)
+    run2 = p.add_run(fecha_str)
+    run2.font.size = Pt(11)
+    run2.font.bold = True
+    run2.font.color.rgb = RGBColor(201, 162, 39)
+
+    # Columna 2: firma
+    cell = table.cell(0, 1)
+    cell.text = ""
+    p = cell.paragraphs[0]
+    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run = p.add_run("_______________________\n")
+    run2 = p.add_run("Dirección Académica")
+    run2.font.size = Pt(10)
+
+    # Columna 3: código
+    cell = table.cell(0, 2)
+    cell.text = ""
+    p = cell.paragraphs[0]
+    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run = p.add_run("Código de verificación\n")
+    run.font.size = Pt(10)
+    run.font.color.rgb = RGBColor(120, 120, 120)
+    run2 = p.add_run(codigo)
+    run2.font.size = Pt(10)
+    run2.font.name = "Consolas"
+
+    buffer = BytesIO()
+    doc.save(buffer)
+    buffer.seek(0)
+    return buffer
+
+
+# ============================================================
+# INFORME DE PROGRESO (PDF)
+# ============================================================
+def generar_pdf_progreso(user):
+    """Genera un informe de progreso completo en PDF."""
+    from reportlab.lib.pagesizes import A4
+    from reportlab.pdfgen import canvas
+    from reportlab.lib.colors import HexColor, white
+    from io import BytesIO
+
+    # Datos
+    user_score, _ = UserScore.objects.get_or_create(user=user)
+    streak, _ = UserStreak.objects.get_or_create(user=user)
+    inscripciones = Inscripcion.objects.filter(user=user).select_related('course')
+    certificados = Certificado.objects.filter(usuario=user)
+    logros = Logro.objects.filter(user=user)
+    progreso_qs = UserProgress.objects.filter(user=user, completed=True)
+
+    buffer = BytesIO()
+    W, H = A4
+    c = canvas.Canvas(buffer, pagesize=A4)
+
+    dorado = HexColor("#C9A227")
+    azul = HexColor("#0a0e27")
+    cyan = HexColor("#00d4ff")
+    gris = HexColor("#888888")
+    verde = HexColor("#00ff88")
+
+    # Fondo
+    c.setFillColor(azul)
+    c.rect(0, 0, W, H, fill=1, stroke=0)
+
+    # Encabezado
+    c.setFillColor(cyan)
+    c.setFont("Helvetica-Bold", 14)
+    c.drawString(40, H-50, "⌛ ARCHIVO DE VECTOR")
+    c.setFillColor(gris)
+    c.setFont("Helvetica", 9)
+    c.drawString(40, H-65, "Informe de progreso académico")
+
+    # Datos del estudiante
+    c.setFillColor(white)
+    c.setFont("Helvetica-Bold", 16)
+    c.drawString(40, H-100, user.get_full_name() or user.username)
+    c.setFillColor(gris)
+    c.setFont("Helvetica", 10)
+    c.drawString(40, H-118, f"Usuario: {user.username} · Email: {user.email or '—'}")
+    from datetime import datetime
+    c.drawString(40, H-132, f"Informe generado: {datetime.now().strftime('%d/%m/%Y %H:%M')}")
+
+    # Separador
+    c.setStrokeColor(dorado)
+    c.setLineWidth(1)
+    c.line(40, H-145, W-40, H-145)
+
+    # Estadísticas
+    y = H-180
+    c.setFillColor(white)
+    c.setFont("Helvetica-Bold", 13)
+    c.drawString(40, y, "📊 RESUMEN")
+    y -= 25
+
+    stats = [
+        ("🏆 Puntos totales", str(user_score.total_points)),
+        ("🔥 Racha actual", f"{streak.current_streak} días"),
+        ("📚 Lecciones completadas", str(progreso_qs.count())),
+        ("📖 Cursos inscritos", str(inscripciones.count())),
+        ("🏅 Logros obtenidos", str(logros.count())),
+        ("🎓 Certificados", str(certificados.count())),
+    ]
+
+    for label, value in stats:
+        c.setFillColor(gris)
+        c.setFont("Helvetica", 10)
+        c.drawString(50, y, label)
+        c.setFillColor(cyan)
+        c.setFont("Helvetica-Bold", 11)
+        c.drawString(300, y, value)
+        y -= 18
+
+    # Cursos
+    y -= 20
+    c.setFillColor(white)
+    c.setFont("Helvetica-Bold", 13)
+    c.drawString(40, y, "📖 PROGRESO POR CURSO")
+    y -= 20
+
+    for insc in inscripciones:
+        course = insc.course
+        total = course.lessons.count()
+        completadas = progreso_qs.filter(lesson__course=course).count()
+        pct = round((completadas / total * 100) if total > 0 else 0)
+
+        if y < 80:
+            c.showPage()
+            c.setFillColor(azul)
+            c.rect(0, 0, W, H, fill=1, stroke=0)
+            y = H - 60
+
+        c.setFillColor(white)
+        c.setFont("Helvetica", 9)
+        c.drawString(50, y, course.name[:55])
+
+        # Barra
+        bar_x = 350
+        bar_w = 150
+        bar_h = 8
+        c.setFillColor(HexColor("#2a2a3e"))
+        c.rect(bar_x, y-2, bar_w, bar_h, fill=1, stroke=0)
+        c.setFillColor(verde if pct == 100 else cyan)
+        c.rect(bar_x, y-2, bar_w * pct / 100, bar_h, fill=1, stroke=0)
+
+        c.setFillColor(gris)
+        c.setFont("Helvetica", 8)
+        c.drawString(bar_x + bar_w + 10, y, f"{completadas}/{total} ({pct}%)")
+
+        y -= 15
+
+    # Pie
+    c.setFillColor(gris)
+    c.setFont("Helvetica", 8)
+    c.drawCentredString(W/2, 30, "Archivo de Vector · Informe generado automáticamente")
+
+    c.showPage()
+    c.save()
+    buffer.seek(0)
+    return buffer
+
+
+@login_required
+def descargar_certificado_pdf(request, curso_slug):
+    """Descarga certificado PDF mejorado."""
+    curso = get_object_or_404(Course, slug=curso_slug, is_active=True)
+    lecciones = curso.lessons.filter(is_active=True)
+    total_ejercicios = sum(l.exercises.count() for l in lecciones)
+    completados = UserProgress.objects.filter(user=request.user, lesson__course=curso, completed=True).count()
+    puntuacion = UserProgress.objects.filter(user=request.user, lesson__course=curso).aggregate(total=models.Sum('score'))['total'] or 0
+    porcentaje = int((completados / total_ejercicios * 100)) if total_ejercicios > 0 else 0
+
+    from core.models import Certificado
+    cert, created = Certificado.objects.get_or_create(
+        usuario=request.user, curso=curso, leccion=None,
+        defaults={
+            'titulo': f"Curso: {curso.name}",
+            'puntuacion': puntuacion,
+            'ejercicios_completados': completados,
+            'total_ejercicios': total_ejercicios,
+            'porcentaje': porcentaje,
+            'codigo_verificacion': f"VECTOR-{uuid.uuid4().hex[:8].upper()}",
+        }
+    )
+
+    pdf = generar_pdf_certificado_v2(
+        user=request.user,
+        titulo=f"Curso: {curso.name}",
+        curso=curso,
+        completados=completados,
+        total_ejercicios=total_ejercicios,
+        porcentaje=porcentaje,
+        puntuacion=puntuacion,
+        codigo=cert.codigo_verificacion,
+        fecha=cert.fecha_emision,
+    )
+
+    response = HttpResponse(pdf.read(), content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="certificado_{curso.slug}.pdf"'
+    return response
+
+
+@login_required
+def descargar_certificado_docx(request, curso_slug):
+    """Descarga certificado Word."""
+    curso = get_object_or_404(Course, slug=curso_slug, is_active=True)
+    lecciones = curso.lessons.filter(is_active=True)
+    total_ejercicios = sum(l.exercises.count() for l in lecciones)
+    completados = UserProgress.objects.filter(user=request.user, lesson__course=curso, completed=True).count()
+    puntuacion = UserProgress.objects.filter(user=request.user, lesson__course=curso).aggregate(total=models.Sum('score'))['total'] or 0
+    porcentaje = int((completados / total_ejercicios * 100)) if total_ejercicios > 0 else 0
+
+    from core.models import Certificado
+    cert, created = Certificado.objects.get_or_create(
+        usuario=request.user, curso=curso, leccion=None,
+        defaults={
+            'titulo': f"Curso: {curso.name}",
+            'puntuacion': puntuacion,
+            'ejercicios_completados': completados,
+            'total_ejercicios': total_ejercicios,
+            'porcentaje': porcentaje,
+            'codigo_verificacion': f"VECTOR-{uuid.uuid4().hex[:8].upper()}",
+        }
+    )
+
+    try:
+        docx = generar_docx_certificado(
+            user=request.user,
+            titulo=f"Curso: {curso.name}",
+            curso=curso,
+            completados=completados,
+            total_ejercicios=total_ejercicios,
+            porcentaje=porcentaje,
+            puntuacion=puntuacion,
+            codigo=cert.codigo_verificacion,
+            fecha=cert.fecha_emision,
+        )
+    except ImportError as e:
+        return HttpResponse(f"Error: {e}. Instala python-docx.", status=500)
+
+    response = HttpResponse(
+        docx.read(),
+        content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    )
+    response['Content-Disposition'] = f'attachment; filename="certificado_{curso.slug}.docx"'
+    return response
+
+
+@login_required
+def descargar_informe_progreso(request, formato='pdf'):
+    """Descarga informe de progreso."""
+    pdf = generar_pdf_progreso(request.user)
+    response = HttpResponse(pdf.read(), content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="progreso_{request.user.username}.pdf"'
+    return response
+
