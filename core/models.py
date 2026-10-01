@@ -193,3 +193,20 @@ class Logro(models.Model):
 # MODELOS AÑADIDOS: Inscripcion + Logro
 # ============================================================
 
+
+class Evaluacion(models.Model):
+    """Evaluacion de un profesor a un estudiante en un curso."""
+    profesor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='evaluaciones_dadas')
+    estudiante = models.ForeignKey(User, on_delete=models.CASCADE, related_name='evaluaciones_recibidas')
+    curso = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='evaluaciones')
+    nota = models.PositiveIntegerField(default=0)
+    comentario = models.TextField(blank=True, default='')
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('profesor', 'estudiante', 'curso')
+        verbose_name = 'Evaluacion'
+        verbose_name_plural = 'Evaluaciones'
+
+    def __str__(self):
+        return self.estudiante.username + ' - ' + self.curso.name + ' (' + str(self.nota) + ')'

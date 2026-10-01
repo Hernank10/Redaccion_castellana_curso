@@ -1,0 +1,85 @@
+{% extends 'core/base.html' %}
+{% load i18n %}
+{% block title %}{{ curso.name }} · Profesor{% endblock %}
+{% block content %}
+<style>
+.tcs-container{max-width:1200px;margin:0 auto;padding:40px 20px;}
+.tcs-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px;margin-bottom:25px;}
+.tcs-title{color:#fff;font-size:1.8em;}
+.tcs-subtitle{color:#aaa;margin-top:5px;}
+.tcs-table{width:100%;border-collapse:collapse;background:#1a1a2e;border-radius:12px;overflow:hidden;}
+.tcs-table th{background:#0f0f1e;color:#00d4ff;padding:15px;text-align:left;font-size:.85em;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #2a2a3e;}
+.tcs-table td{padding:15px;border-bottom:1px solid #2a2a3e;color:#fff;}
+.tcs-table tr:hover{background:#1f1f33;}
+.pbar{background:#2a2a3e;border-radius:6px;height:8px;overflow:hidden;margin:5px 0;}
+.pbar-fill{background:linear-gradient(90deg,#00d4ff,#00ff88);height:100%;}
+.badge{display:inline-block;padding:4px 10px;border-radius:12px;font-size:.75em;font-weight:bold;}
+.badge-ok{background:rgba(0,255,136,.15);color:#00ff88;border:1px solid #00ff88;}
+.badge-no{background:rgba(170,170,170,.15);color:#aaa;border:1px solid #333;}
+.badge-eval{background:rgba(255,215,0,.15);color:#ffd700;border:1px solid #ffd700;}
+.btn{display:inline-block;padding:8px 14px;border-radius:6px;text-decoration:none;font-size:.85em;font-weight:500;margin:2px;border:none;cursor:pointer;}
+.btn-primary{background:#00d4ff;color:#000;}
+.btn-secondary{background:#2a2a3e;color:#fff;}
+.btn-success{background:#00ff88;color:#000;}
+.btn-warning{background:#ffd700;color:#000;}
+</style>
+<div class="tcs-container">
+    <a href="{% url 'teacher_dashboard' %}" style="color:#00d4ff;text-decoration:none;">← {% trans "Volver al panel" %}</a>
+    <div class="tcs-header">
+        <div>
+            <h1 class="tcs-title">{{ curso.icon }} {{ curso.name }}</h1>
+            <p class="tcs-subtitle">{{ total_estudiantes }} {% trans "estudiantes inscritos" %}</p>
+        </div>
+    </div>
+
+    {% if estudiantes_data %}
+    <table class="tcs-table">
+        <thead>
+            <tr>
+                <th>{% trans "Estudiante" %}</th>
+                <th>{% trans "Progreso" %}</th>
+                <th>{% trans "Puntos" %}</th>
+                <th>{% trans "Evaluacion" %}</th>
+                <th>{% trans "Certificado" %}</th>
+                <th>{% trans "Acciones" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ed in estudiantes_data %}
+            <tr>
+                <td><strong>{{ ed.user.username }}</strong><br><small style="color:#888;">{{ ed.user.get_full_name|default:"" }}</small></td>
+                <td style="min-width:180px;">
+                    <div class="pbar"><div class="pbar-fill" style="width: {{ ed.porcentaje }}%;"></div></div>
+                    <small style="color:#aaa;">{{ ed.progreso }}/{{ ed.total_lecciones }} ({{ ed.porcentaje }}%)</small>
+                </td>
+                <td><strong style="color:#00d4ff;">{{ ed.puntos }}</strong></td>
+                <td>
+                    {% if ed.evaluacion %}
+                    <span class="badge badge-eval">{{ ed.evaluacion.nota }}/100</span>
+                    {% else %}
+                    <span class="badge badge-no">—</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if ed.certificado %}
+                    <span class="badge badge-ok">✅ {{ ed.certificado.codigo_verificacion }}</span>
+                    {% else %}
+                    <span class="badge badge-no">—</span>
+                    {% endif %}
+                </td>
+                <td style="min-width:220px;">
+                    <a href="{% url 'teacher_student_detail' curso.slug ed.user.id %}" class="btn btn-secondary">👁️ Ver</a>
+                    <a href="{% url 'teacher_evaluate' curso.slug ed.user.id %}" class="btn btn-warning">📝 Evaluar</a>
+                    {% if not ed.certificado %}
+                    <a href="{% url 'teacher_certify' curso.slug ed.user.id %}" class="btn btn-success" onclick="return confirm('¿Emitir certificado a {{ ed.user.username }}?');">🎓 Certificar</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color:#aaa;text-align:center;padding:40px;">{% trans "No hay estudiantes inscritos en este curso." %}</p>
+    {% endif %}
+</div>
+{% endblock %}

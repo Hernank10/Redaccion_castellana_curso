@@ -1,0 +1,39 @@
+{% extends 'core/base.html' %}
+{% load i18n %}
+{% block title %}{% trans "Evaluar" %} {{ estudiante.username }}{% endblock %}
+{% block content %}
+<style>
+.te-container{max-width:600px;margin:60px auto;padding:20px;}
+.te-card{background:#1a1a2e;padding:35px;border-radius:16px;border:1px solid #2a2a3e;}
+.te-card h1{color:#fff;margin:0 0 25px;text-align:center;}
+.te-card label{color:#ccc;display:block;margin-bottom:6px;font-weight:500;}
+.te-card input[type=number],.te-card textarea{width:100%;padding:12px;background:#0f0f1e;border:1px solid #333;border-radius:8px;color:#fff;font-size:1em;box-sizing:border-box;font-family:inherit;}
+.te-card textarea{min-height:120px;resize:vertical;}
+.te-card button{width:100%;padding:14px;background:linear-gradient(90deg,#00d4ff,#00ff88);border:none;border-radius:8px;color:#000;font-weight:bold;font-size:1em;cursor:pointer;margin-top:20px;}
+</style>
+<div class="te-container">
+    <div class="te-card">
+        <h1>📝 {% trans "Evaluar estudiante" %}</h1>
+        <p style="color:#aaa;text-align:center;margin-bottom:25px;">
+            <strong style="color:#00d4ff;">{{ estudiante.username }}</strong> · {{ curso.name }}
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+            <div style="margin-bottom:20px;">
+                <label>{% trans "Nota (0-100)" %}</label>
+                <input type="number" name="nota" min="0" max="100" value="{{ evaluacion.nota|default:0 }}" required>
+            </div>
+            <div style="margin-bottom:20px;">
+                <label>{% trans "Comentario" %}</label>
+                <textarea name="comentario" placeholder="{% trans 'Retroalimentacion para el estudiante...' %}">{{ evaluacion.comentario|default:'' }}</textarea>
+            </div>
+            <button type="submit">💾 {% trans "Guardar evaluacion" %}</button>
+        </form>
+
+        <div style="text-align:center;margin-top:20px;">
+            <a href="{% url 'teacher_course_students' curso.slug %}" style="color:#00d4ff;text-decoration:none;">← {% trans "Volver" %}</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

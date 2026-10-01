@@ -9,11 +9,13 @@ from reportlab.lib.enums import TA_CENTER
 import uuid
 
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.models import User
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import JsonResponse
 from django.urls import reverse
-from .models import Course, Lesson, Exercise, UserProgress, UserScore, UserStreak, Inscripcion, Logro, Certificado
+from .models import Course, Lesson, Exercise, UserProgress, UserScore, UserStreak, Inscripcion, Logro, Certificado, Evaluacion
 import json
 
 # ===== VISTAS PÚBLICAS =====
@@ -1190,5 +1192,217 @@ def descargar_informe_progreso(request, formato='pdf'):
     pdf = generar_pdf_progreso(request.user)
     response = HttpResponse(pdf.read(), content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="progreso_{request.user.username}.pdf"'
+    return response
+
+
+# ============================================================
+# VISTAS DEL PROFESOR (dashboard, estudiantes, evaluar, certificar)
+# ============================================================
+
+@staff_member_required
+def teacher_dashboard(request):
+    """Dashboard del profesor: sus cursos + estadisticas."""
+    mis_cursos = Course.objects.filter(teachers=request.user, is_active=True)
+    if not mis_cursos.exists():
+        # Fallback: si no tiene cursos asignados, mostrar todos (modo admin)
+        mis_cursos = Course.objects.filter(is_active=True)
+
+    cursos_data = []
+    total_estudiantes = set()
+    total_inscripciones = 0
+    total_certs = 0
+
+    for curso in mis_cursos:
+        inscripciones = Inscripcion.objects.filter(course=curso)
+        n_est = inscripciones.count()
+        estudiantes_ids = list(inscripciones.values_list('user_id', flat=True))
+        total_estudiantes.update(estudiantes_ids)
+        total_inscripciones += n_est
+
+        certs = Certificado.objects.filter(curso=curso).count()
+        total_certs += certs
+
+        # Progreso promedio
+        total_lecciones = curso.lessons.count()
+        total_completadas = UserProgress.objects.filter(
+            user_id__in=estudiantes_ids, lesson__course=curso, completed=True
+        ).count()
+        promedio = round((total_completadas / (total_lecciones * n_est) * 100)) if total_lecciones and n_est else 0
+
+        cursos_data.append({
+            'curso': curso,
+            'estudiantes': n_est,
+            'certificados': certs,
+            'promedio': promedio,
+            'total_lecciones': total_lecciones,
+        })
+
+    context = {
+        'cursos_data': cursos_data,
+        'total_cursos': mis_cursos.count(),
+        'total_estudiantes': len(total_estudiantes),
+        'total_inscripciones': total_inscripciones,
+        'total_certificados': total_certs,
+    }
+    return render(request, 'core/teacher_dashboard.html', context)
+
+
+@staff_member_required
+def teacher_course_students(request, curso_slug):
+    """Lista de estudiantes inscritos en un curso con su progreso."""
+    curso = get_object_or_404(Course, slug=curso_slug, is_active=True)
+    inscripciones = Inscripcion.objects.filter(course=curso).select_related('user')
+
+    total_lecciones = curso.lessons.count()
+    estudiantes_data = []
+
+    for insc in inscripciones:
+        user = insc.user
+        progreso = UserProgress.objects.filter(
+            user=user, lesson__course=curso, completed=True
+        ).count()
+        porcentaje = round((progreso / total_lecciones * 100)) if total_lecciones else 0
+        score = UserScore.objects.filter(user=user).first()
+        cert = Certificado.objects.filter(usuario=user, curso=curso).first()
+        eval_obj = Evaluacion.objects.filter(estudiante=user, curso=curso).first()
+
+        estudiantes_data.append({
+            'user': user,
+            'progreso': progreso,
+            'total_lecciones': total_lecciones,
+            'porcentaje': porcentaje,
+            'puntos': score.total_points if score else 0,
+            'certificado': cert,
+            'evaluacion': eval_obj,
+        })
+
+    # Ordenar por porcentaje desc
+    estudiantes_data.sort(key=lambda x: -x['porcentaje'])
+
+    context = {
+        'curso': curso,
+        'estudiantes_data': estudiantes_data,
+        'total_estudiantes': len(estudiantes_data),
+    }
+    return render(request, 'core/teacher_course_students.html', context)
+
+
+@staff_member_required
+def teacher_student_detail(request, curso_slug, user_id):
+    """Detalle de un estudiante en un curso."""
+    curso = get_object_or_404(Course, slug=curso_slug, is_active=True)
+    estudiante = get_object_or_404(User, id=user_id)
+
+    lecciones = curso.lessons.all().order_by('order')
+    lecciones_data = []
+    for lec in lecciones:
+        prog = UserProgress.objects.filter(user=estudiante, lesson=lec).first()
+        lecciones_data.append({
+            'leccion': lec,
+            'progreso': prog,
+            'completada': prog.completed if prog else False,
+            'score': prog.score if prog else 0,
+        })
+
+    total = len(lecciones_data)
+    completadas = sum(1 for l in lecciones_data if l['completada'])
+    porcentaje = round((completadas / total * 100)) if total else 0
+
+    cert = Certificado.objects.filter(usuario=estudiante, curso=curso).first()
+    eval_obj = Evaluacion.objects.filter(estudiante=estudiante, curso=curso).first()
+
+    context = {
+        'curso': curso,
+        'estudiante': estudiante,
+        'lecciones_data': lecciones_data,
+        'total': total,
+        'completadas': completadas,
+        'porcentaje': porcentaje,
+        'certificado': cert,
+        'evaluacion': eval_obj,
+    }
+    return render(request, 'core/teacher_student_detail.html', context)
+
+
+@staff_member_required
+def teacher_evaluate(request, curso_slug, user_id):
+    """Formulario para evaluar a un estudiante."""
+    curso = get_object_or_404(Course, slug=curso_slug, is_active=True)
+    estudiante = get_object_or_404(User, id=user_id)
+
+    evaluacion = Evaluacion.objects.filter(
+        profesor=request.user, estudiante=estudiante, curso=curso
+    ).first()
+
+    if request.method == 'POST':
+        nota = int(request.POST.get('nota', 0))
+        comentario = request.POST.get('comentario', '')
+
+        if evaluacion:
+            evaluacion.nota = nota
+            evaluacion.comentario = comentario
+            evaluacion.save()
+        else:
+            Evaluacion.objects.create(
+                profesor=request.user,
+                estudiante=estudiante,
+                curso=curso,
+                nota=nota,
+                comentario=comentario,
+            )
+
+        return redirect('teacher_course_students', curso_slug=curso.slug)
+
+    context = {
+        'curso': curso,
+        'estudiante': estudiante,
+        'evaluacion': evaluacion,
+    }
+    return render(request, 'core/teacher_evaluate.html', context)
+
+
+@staff_member_required
+def teacher_certify(request, curso_slug, user_id):
+    """Emite certificado manualmente para un estudiante."""
+    curso = get_object_or_404(Course, slug=curso_slug, is_active=True)
+    estudiante = get_object_or_404(User, id=user_id)
+
+    lecciones = curso.lessons.filter(is_active=True)
+    total_ejercicios = sum(l.exercises.count() for l in lecciones)
+    completados = UserProgress.objects.filter(
+        user=estudiante, lesson__course=curso, completed=True
+    ).count()
+    puntuacion = UserProgress.objects.filter(
+        user=estudiante, lesson__course=curso
+    ).aggregate(total=models.Sum('score'))['total'] or 0
+    porcentaje = int((completados / total_ejercicios * 100)) if total_ejercicios > 0 else 0
+
+    cert, created = Certificado.objects.get_or_create(
+        usuario=estudiante,
+        curso=curso,
+        leccion=None,
+        defaults={
+            'titulo': 'Curso: ' + curso.name,
+            'puntuacion': puntuacion,
+            'ejercicios_completados': completados,
+            'total_ejercicios': total_ejercicios,
+            'porcentaje': porcentaje,
+            'codigo_verificacion': 'VECTOR-' + uuid.uuid4().hex[:8].upper(),
+        }
+    )
+
+    return redirect('teacher_course_students', curso_slug=curso.slug)
+
+
+@staff_member_required
+def teacher_student_progress_pdf(request, curso_slug, user_id):
+    """PDF con el progreso de un estudiante en un curso."""
+    curso = get_object_or_404(Course, slug=curso_slug, is_active=True)
+    estudiante = get_object_or_404(User, id=user_id)
+
+    pdf = generar_pdf_progreso(estudiante)
+
+    response = HttpResponse(pdf.read(), content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="progreso_' + estudiante.username + '.pdf"'
     return response
 
