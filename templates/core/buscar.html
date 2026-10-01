@@ -1,0 +1,153 @@
+{% extends 'core/base.html' %}
+{% load i18n %}
+{% block title %}{% trans "Buscar" %}<script>
+// Busqueda live: submit automatico tras 600ms sin escribir
+(function(){
+    const form = document.querySelector('.bs-form');
+    const input = document.querySelector('input[name="q"]');
+    const selects = document.querySelectorAll('.bs-form select');
+    let timer;
+    if (input) {
+        input.addEventListener('input', function(){
+            clearTimeout(timer);
+            timer = setTimeout(() => form.submit(), 600);
+        });
+    }
+    selects.forEach(s => s.addEventListener('change', () => form.submit()));
+})();
+</script>
+{% endblock %}
+{% block content %}
+<style>
+.bs-container{max-width:1100px;margin:40px auto;padding:20px;}
+.bs-title{color:#fff;font-size:1.8em;margin-bottom:25px;text-align:center;}
+.bs-form{background:#1a1a2e;padding:22px;border-radius:12px;border:1px solid #2a2a3e;margin-bottom:25px;}
+.bs-input{width:100%;padding:14px 18px;background:#0f0f1e;border:1px solid #333;border-radius:10px;color:#fff;font-size:1.05em;box-sizing:border-box;margin-bottom:15px;}
+.bs-input:focus{outline:none;border-color:#00d4ff;}
+.bs-filtros{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;}
+.bs-filtro label{color:#888;display:block;margin-bottom:6px;font-size:.8em;text-transform:uppercase;letter-spacing:1px;}
+.bs-filtro select{width:100%;padding:11px;background:#0f0f1e;border:1px solid #333;border-radius:8px;color:#fff;font-size:1em;box-sizing:border-box;}
+.bs-botones{display:flex;gap:10px;margin-top:18px;}
+.bs-botones button{flex:1;padding:12px;background:linear-gradient(90deg,#00d4ff,#00ff88);border:none;border-radius:8px;color:#000;font-weight:600;font-size:1em;cursor:pointer;}
+.bs-botones a{padding:12px 22px;background:#2a2a3e;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;}
+.bs-resumen{color:#aaa;margin-bottom:20px;font-size:.95em;}
+.bs-resumen strong{color:#00d4ff;}
+.bs-section{margin-bottom:30px;}
+.bs-section h2{color:#fff;font-size:1.2em;margin:0 0 15px;border-bottom:1px solid #2a2a3e;padding-bottom:10px;}
+.bs-curso{background:#1a1a2e;padding:18px;border-radius:10px;border:1px solid #2a2a3e;margin-bottom:12px;text-decoration:none;display:block;color:inherit;transition:all .2s;}
+.bs-curso:hover{border-color:#00d4ff;transform:translateX(3px);}
+.bs-curso h3{color:#fff;margin:0 0 6px;font-size:1.05em;}
+.bs-curso p{color:#aaa;font-size:.9em;margin:0;}
+.bs-curso .badge{display:inline-block;background:rgba(0,212,255,.15);color:#00d4ff;padding:3px 10px;border-radius:10px;font-size:.75em;margin-top:8px;}
+.bs-leccion{background:#1a1a2e;padding:15px;border-radius:8px;border:1px solid #2a2a3e;margin-bottom:10px;text-decoration:none;display:block;color:inherit;transition:all .2s;}
+.bs-leccion:hover{border-color:#00d4ff;transform:translateX(3px);}
+.bs-leccion h4{color:#fff;margin:0 0 5px;font-size:1em;}
+.bs-leccion .meta{color:#888;font-size:.85em;}
+.bs-empty{background:#1a1a2e;border:1px dashed #333;border-radius:12px;padding:60px 20px;text-align:center;color:#aaa;}
+</style>
+<div class="bs-container">
+    <h1 class="bs-title">🔍 {% trans "Buscar" %}</h1>
+
+    <form method="get" class="bs-form">
+        <input type="text" name="q" class="bs-input" placeholder="{% trans 'Buscar cursos, lecciones, contenido...' %}" value="{{ q }}" autofocus>
+
+        <div class="bs-filtros">
+            <div class="bs-filtro">
+                <label>{% trans "Categoria" %}</label>
+                <select name="categoria">
+                    <option value="">— Todas —</option>
+                    {% for key, label in categorias %}
+                    <option value="{{ key }}" {% if categoria == key %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="bs-filtro">
+                <label>{% trans "Dificultad" %}</label>
+                <select name="dificultad">
+                    <option value="">— Todas —</option>
+                    {% for key, label in dificultades %}
+                    <option value="{{ key }}" {% if dificultad == key %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="bs-filtro">
+                <label>{% trans "Buscar en" %}</label>
+                <select name="tipo">
+                    <option value="todo" {% if tipo == 'todo' %}selected{% endif %}>Todo</option>
+                    <option value="cursos" {% if tipo == 'cursos' %}selected{% endif %}>Solo cursos</option>
+                    <option value="lecciones" {% if tipo == 'lecciones' %}selected{% endif %}>Solo lecciones</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="bs-botones">
+            <button type="submit">🔍 Buscar</button>
+            <a href="{% url 'buscar' %}">Limpiar</a>
+        </div>
+    </form>
+
+    {% if hay_filtros %}
+    <div class="bs-resumen">
+        <strong>{{ total }}</strong> resultado{{ total|pluralize }} encontrado{{ total|pluralize }}
+        {% if q %}para "<strong>{{ q }}</strong>"{% endif %}
+    </div>
+
+    {% if cursos %}
+    <div class="bs-section">
+        <h2>📚 Cursos ({{ cursos|length }})</h2>
+        {% for c in cursos %}
+        <a href="{% url 'course_detail' c.slug %}" class="bs-curso">
+            <h3>{{ c.icon }} {{ c.name }}</h3>
+            <p>{{ c.description|truncatechars:120 }}</p>
+            <span class="badge">{{ c.get_category_display }}</span>
+        </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if lecciones %}
+    <div class="bs-section">
+        <h2>📖 Lecciones ({{ lecciones|length }})</h2>
+        {% for l in lecciones %}
+        <a href="{% url 'practice_lesson' l.id %}" class="bs-leccion">
+            <h4>{{ l.title }}</h4>
+            <div class="meta">
+                {{ l.course.icon }} {{ l.course.name }} · {{ l.get_difficulty_display|default:l.difficulty }}
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if not cursos and not lecciones %}
+    <div class="bs-empty">
+        <div style="font-size:3em;margin-bottom:15px;">🔍</div>
+        <p>{% trans "No se encontraron resultados." %}</p>
+        <p style="font-size:.9em;margin-top:10px;">Prueba con otras palabras o quita los filtros.</p>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="bs-empty">
+        <div style="font-size:3em;margin-bottom:15px;">🔍</div>
+        <p>{% trans "Escribe algo para buscar cursos y lecciones." %}</p>
+    </div>
+    {% endif %}
+</div>
+<script>
+// Busqueda live: submit automatico tras 600ms sin escribir
+(function(){
+    const form = document.querySelector('.bs-form');
+    const input = document.querySelector('input[name="q"]');
+    const selects = document.querySelectorAll('.bs-form select');
+    let timer;
+    if (input) {
+        input.addEventListener('input', function(){
+            clearTimeout(timer);
+            timer = setTimeout(() => form.submit(), 600);
+        });
+    }
+    selects.forEach(s => s.addEventListener('change', () => form.submit()));
+})();
+</script>
+{% endblock %}

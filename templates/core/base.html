@@ -50,6 +50,7 @@
                   <a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> {% trans "Iniciar sesion" %}</a>
                   <a href="{% url 'registro' %}"><i class="fas fa-user-plus"></i> {% trans "Crear cuenta" %}</a>
                 {% endif %}
+                <a href="{% url 'buscar' %}" title="Buscar" style="padding:0 8px;"><i class="fas fa-search"></i></a>
                 <!-- SELECTOR DE IDIOMAS -->
                 <form action="{% url 'set_language' %}" method="post" class="lang-form">
                     {% csrf_token %}

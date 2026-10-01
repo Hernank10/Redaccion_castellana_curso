@@ -1701,3 +1701,65 @@ def ranking_profesor(request):
     return render(request, 'core/ranking_profesor.html', {
         'cursos_ranking': cursos_ranking,
     })
+
+
+# ============================================================
+# BUSCADOR CON FILTROS
+# ============================================================
+
+def buscar(request):
+    """Buscador global con filtros."""
+    from django.db.models import Q
+
+    q = request.GET.get('q', '').strip()
+    categoria = request.GET.get('categoria', '').strip()
+    dificultad = request.GET.get('dificultad', '').strip()
+    tipo = request.GET.get('tipo', 'todo').strip()
+
+    cursos = Course.objects.none()
+    lecciones = Lesson.objects.none()
+
+    if q or categoria or dificultad:
+        # Cursos
+        if tipo in ('todo', 'cursos'):
+            cursos = Course.objects.filter(is_active=True)
+            if q:
+                cursos = cursos.filter(
+                    Q(name__icontains=q) | Q(description__icontains=q)
+                )
+            if categoria:
+                cursos = cursos.filter(category=categoria)
+            cursos = cursos.order_by('order', 'name')[:30]
+
+        # Lecciones
+        if tipo in ('todo', 'lecciones'):
+            lecciones = Lesson.objects.filter(is_active=True).select_related('course')
+            if q:
+                lecciones = lecciones.filter(
+                    Q(title__icontains=q) | Q(content__icontains=q) | Q(course__name__icontains=q)
+                )
+            if dificultad:
+                lecciones = lecciones.filter(difficulty=dificultad)
+            if categoria:
+                lecciones = lecciones.filter(course__category=categoria)
+            lecciones = lecciones.order_by('course__name', 'order')[:50]
+
+    total = cursos.count() + lecciones.count()
+
+    context = {
+        'q': q,
+        'categoria': categoria,
+        'dificultad': dificultad,
+        'tipo': tipo,
+        'cursos': cursos,
+        'lecciones': lecciones,
+        'total': total,
+        'categorias': Course.CATEGORY_CHOICES,
+        'dificultades': getattr(Lesson, 'DIFFICULTY_CHOICES', [
+            ('beginner', 'Principiante'),
+            ('intermediate', 'Intermedio'),
+            ('advanced', 'Avanzado'),
+        ]),
+        'hay_filtros': bool(q or categoria or dificultad),
+    }
+    return render(request, 'core/buscar.html', context)
