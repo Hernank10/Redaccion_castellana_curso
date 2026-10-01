@@ -32,6 +32,12 @@
                    {% if user.is_staff %}
                        <a href="{% url 'teacher_dashboard' %}"><i class="fas fa-chalkboard-teacher"></i> {% trans "Profesor" %}</a>
                    {% endif %}
+                   <a href="{% url 'notificaciones_lista' %}" style="position:relative;text-decoration:none;color:inherit;padding:0 8px;">
+                       <i class="fas fa-bell"></i>
+                       {% if notificaciones_no_leidas %}
+                       <span style="position:absolute;top:-6px;right:0;background:#ff4444;color:#fff;font-size:.7em;padding:2px 6px;border-radius:10px;font-weight:bold;">{{ notificaciones_no_leidas }}</span>
+                       {% endif %}
+                   </a>
                    <a href="{% url 'perfil' %}" class="nav-user" style="text-decoration:none;color:inherit;"><i class="fas fa-user"></i> {{ user.username }}</a>
                    <form method="post" action="{% url 'logout' %}" style="display:inline;margin:0;">
     {% csrf_token %}

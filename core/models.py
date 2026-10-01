@@ -210,3 +210,30 @@ class Evaluacion(models.Model):
 
     def __str__(self):
         return self.estudiante.username + ' - ' + self.curso.name + ' (' + str(self.nota) + ')'
+
+
+class Notificacion(models.Model):
+    """Notificacion para un usuario."""
+    TIPOS = [
+        ('curso_completado', 'Curso completado'),
+        ('evaluacion', 'Evaluacion recibida'),
+        ('certificado', 'Certificado emitido'),
+        ('logro', 'Logro desbloqueado'),
+        ('inscripcion', 'Nueva inscripcion'),
+        ('info', 'Informacion'),
+    ]
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notificaciones')
+    tipo = models.CharField(max_length=30, choices=TIPOS, default='info')
+    titulo = models.CharField(max_length=200)
+    mensaje = models.TextField(blank=True, default='')
+    url = models.CharField(max_length=300, blank=True, default='')
+    leida = models.BooleanField(default=False)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-fecha']
+        verbose_name = 'Notificacion'
+        verbose_name_plural = 'Notificaciones'
+
+    def __str__(self):
+        return self.user.username + ' - ' + self.titulo

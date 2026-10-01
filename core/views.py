@@ -12,6 +12,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from core.notificaciones import crear_notificacion_curso_completado, crear_notificacion_evaluacion, crear_notificacion_certificado
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import JsonResponse
 from django.urls import reverse
@@ -101,6 +102,21 @@ def save_lesson_progress(request):
             ).count()
             user_score.save()
             streak, _ = UserStreak.objects.get_or_create(user=request.user)
+
+            # Notificar si el curso se acaba de completar al 100%
+            if completed:
+                total_lecciones = lesson.course.lessons.count()
+                completadas = UserProgress.objects.filter(
+                    user=request.user, lesson__course=lesson.course, completed=True
+                ).count()
+                if total_lecciones > 0 and completadas >= total_lecciones:
+                    from core.models import Notificacion
+                    ya_notificado = Notificacion.objects.filter(
+                        user=request.user, tipo='curso_completado', titulo__contains=lesson.course.name
+                    ).exists()
+                    if not ya_notificado:
+                        crear_notificacion_curso_completado(request.user, lesson.course)
+
             if completed:
                 streak.current_streak += 1
                 if streak.current_streak > streak.max_streak:
@@ -1351,6 +1367,7 @@ def teacher_evaluate(request, curso_slug, user_id):
                 comentario=comentario,
             )
 
+        crear_notificacion_evaluacion(estudiante, curso, nota, request.user)
         return redirect('teacher_course_students', curso_slug=curso.slug)
 
     context = {
@@ -1527,3 +1544,41 @@ def teacher_lesson_delete(request, curso_slug, lesson_id):
         'tipo': 'leccion',
         'curso': curso,
     })
+
+
+# ============================================================
+# NOTIFICACIONES
+# ============================================================
+
+@login_required
+def notificaciones_lista(request):
+    """Lista de notificaciones del usuario."""
+    from core.models import Notificacion
+    notifs = Notificacion.objects.filter(user=request.user)
+    no_leidas = notifs.filter(leida=False).count()
+    return render(request, 'core/notificaciones.html', {
+        'notificaciones': notifs,
+        'no_leidas': no_leidas,
+    })
+
+
+@login_required
+def notificacion_leer(request, notif_id):
+    """Marca una notificacion como leida y redirige a su URL."""
+    from core.models import Notificacion
+    from django.shortcuts import redirect as _redir
+    notif = get_object_or_404(Notificacion, id=notif_id, user=request.user)
+    notif.leida = True
+    notif.save()
+    if notif.url:
+        return _redir(notif.url)
+    return _redir('notificaciones_lista')
+
+
+@login_required
+def notificaciones_marcar_todas(request):
+    """Marca todas las notificaciones como leidas."""
+    from core.models import Notificacion
+    from django.shortcuts import redirect as _redir
+    Notificacion.objects.filter(user=request.user, leida=False).update(leida=True)
+    return _redir('notificaciones_lista')
