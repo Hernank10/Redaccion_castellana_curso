@@ -182,7 +182,7 @@
     <div class="pf-section">
         <h2>🎓 {% trans "Certificados recientes" %} <span class="count">{{ certificados_count }}</span></h2>
         {% for cert in ultimos_certs %}
-        <a href="{% url 'certificado_curso' cert.curso.slug %}" target="_blank" style="text-decoration:none;display:block;">
+        <a href="{% url 'certificado_pdf' cert.curso.slug %}" target="_blank" style="text-decoration:none;display:block;">
             <div class="cert-mini" style="cursor:pointer;transition:transform .2s,box-shadow .2s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 25px rgba(255,215,0,.3)';" onmouseout="this.style.transform='';this.style.boxShadow='';">
                 <h4>🎓 {{ cert.titulo }}</h4>
                 <p>{{ cert.curso.name|default:"" }} · {{ cert.fecha_emision|date:"d M Y" }}</p>

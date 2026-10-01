@@ -501,6 +501,7 @@ def generar_certificado(request, leccion_id=None, curso_slug=None):
     
     # Verificar si ya existe un certificado
     from core.models import Certificado
+    from core.certificados import generar_pdf_certificado as _pdf_cert_nuevo
     certificado, creado = Certificado.objects.get_or_create(
         usuario=user,
         curso=curso,
@@ -1106,6 +1107,7 @@ def descargar_certificado_pdf(request, curso_slug):
     porcentaje = int((completados / total_ejercicios * 100)) if total_ejercicios > 0 else 0
 
     from core.models import Certificado
+    from core.certificados import generar_pdf_certificado as _pdf_cert_nuevo
     cert, created = Certificado.objects.get_or_create(
         usuario=request.user, curso=curso, leccion=None,
         defaults={
@@ -1118,12 +1120,12 @@ def descargar_certificado_pdf(request, curso_slug):
         }
     )
 
-    pdf = generar_pdf_certificado_v2(
+    from core.certificados import generar_pdf_certificado as _pdf_nuevo
+    pdf = _pdf_nuevo(
         user=request.user,
-        titulo=f"Curso: {curso.name}",
         curso=curso,
         completados=completados,
-        total_ejercicios=total_ejercicios,
+        total=total_ejercicios,
         porcentaje=porcentaje,
         puntuacion=puntuacion,
         codigo=cert.codigo_verificacion,
@@ -1146,6 +1148,7 @@ def descargar_certificado_docx(request, curso_slug):
     porcentaje = int((completados / total_ejercicios * 100)) if total_ejercicios > 0 else 0
 
     from core.models import Certificado
+    from core.certificados import generar_pdf_certificado as _pdf_cert_nuevo
     cert, created = Certificado.objects.get_or_create(
         usuario=request.user, curso=curso, leccion=None,
         defaults={
