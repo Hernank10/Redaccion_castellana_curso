@@ -1,24 +1,27 @@
 # -*- coding: utf-8 -*-
 """production.py - Settings para produccion (PostgreSQL + HTTPS)."""
 from .base import *  # noqa
+import dj_database_url
 
 DEBUG = False
-SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'temp-key-change-in-railway')
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '*').split(',')
 
 # PostgreSQL
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', 'vector_db'),
-        'USER': os.environ.get('DB_USER', 'vector_user'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': os.environ.get('DB_PORT', '5432'),
-        'CONN_MAX_AGE': 60,
-        'OPTIONS': {'connect_timeout': 10},
+if os.environ.get('DATABASE_URL'):
+    DATABASES = {'default': dj_database_url.config(conn_max_age=600, ssl_require=False)}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('DB_NAME', 'vector_db'),
+            'USER': os.environ.get('DB_USER', 'vector_user'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+            'HOST': os.environ.get('DB_HOST', 'localhost'),
+            'PORT': os.environ.get('DB_PORT', '5432'),
+            'CONN_MAX_AGE': 60,
+        }
     }
-}
 
 # HTTPS obligatorio
 SECURE_SSL_REDIRECT = True
