@@ -51,3 +51,28 @@ LOGGING = {
         'django': {'handlers': ['file'], 'level': 'WARNING', 'propagate': True},
     },
 }
+
+# ============================================================
+# STORAGE EXTERNO (S3 / Cloudflare R2 / Backblaze B2)
+# ============================================================
+import os
+
+if os.environ.get('AWS_ACCESS_KEY_ID'):
+    # Backend S3
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+    AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+    AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
+    AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', 'vector-media')
+    AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', 'auto')
+    AWS_S3_ENDPOINT_URL = os.environ.get('AWS_S3_ENDPOINT_URL', None)
+    AWS_S3_CUSTOM_DOMAIN = os.environ.get('AWS_S3_CUSTOM_DOMAIN', None)
+
+    AWS_DEFAULT_ACL = None  # Privado por defecto
+    AWS_QUERYSTRING_AUTH = True  # URLs firmadas temporales
+    AWS_QUERYSTRING_EXPIRE = 3600  # 1 hora
+    AWS_S3_FILE_OVERWRITE = False
+    AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
+
+    MEDIA_URL = '/media/'  # Se usa para desarrollo; en prod las URLs las genera el storage
+    print('Storage externo S3/R2 configurado')

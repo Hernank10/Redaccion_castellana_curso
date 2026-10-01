@@ -1150,6 +1150,19 @@ def descargar_certificado_pdf(request, curso_slug):
         fecha=cert.fecha_emision,
     )
 
+    # Guardar en storage externo (si esta configurado)
+    try:
+        from django.core.files.base import ContentFile
+        from django.core.files.storage import default_storage
+        nombre_archivo = f'certificados/{cert.codigo_verificacion}.pdf'
+        if not default_storage.exists(nombre_archivo):
+            default_storage.save(nombre_archivo, ContentFile(pdf.read()))
+        pdf.seek(0)  # Resetear posicion para la respuesta
+    except Exception as e:
+        # Si falla el storage, no romper la descarga
+        import logging
+        logging.getLogger(__name__).warning(f'Error guardando certificado en storage: {e}')
+
     response = HttpResponse(pdf.read(), content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="certificado_{curso.slug}.pdf"'
     return response
