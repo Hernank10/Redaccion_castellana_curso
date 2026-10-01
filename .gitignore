@@ -90,3 +90,12 @@ local_settings.py
 db.sqlite3
 media/
 staticfiles/
+
+# Entorno
+.env
+*.env
+logs/
+staticfiles/
+media/
+settings.py.old
+lms_vector_backup_*/
