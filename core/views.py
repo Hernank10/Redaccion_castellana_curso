@@ -1582,3 +1582,122 @@ def notificaciones_marcar_todas(request):
     from django.shortcuts import redirect as _redir
     Notificacion.objects.filter(user=request.user, leida=False).update(leida=True)
     return _redir('notificaciones_lista')
+
+
+# ============================================================
+# RANKING DE ESTUDIANTES
+# ============================================================
+
+def _medalla(pos):
+    if pos == 1: return "🥇"
+    if pos == 2: return "🥈"
+    if pos == 3: return "🥉"
+    return ""
+
+
+def _calcular_ranking_curso(curso):
+    """Devuelve lista ordenada de estudiantes por puntos en un curso."""
+    from django.db.models import Sum
+    inscripciones = Inscripcion.objects.filter(course=curso).select_related('user')
+    total_lecciones = curso.lessons.count()
+
+    datos = []
+    for insc in inscripciones:
+        user = insc.user
+        progs = UserProgress.objects.filter(user=user, lesson__course=curso, completed=True)
+        completadas = progs.count()
+        puntos = progs.aggregate(t=Sum('score'))['t'] or 0
+        porcentaje = round((completadas / total_lecciones * 100)) if total_lecciones else 0
+        cert = Certificado.objects.filter(usuario=user, curso=curso).exists()
+        eval_obj = Evaluacion.objects.filter(estudiante=user, curso=curso).first()
+
+        datos.append({
+            'user': user,
+            'puntos': puntos,
+            'completadas': completadas,
+            'total': total_lecciones,
+            'porcentaje': porcentaje,
+            'certificado': cert,
+            'nota': eval_obj.nota if eval_obj else None,
+        })
+
+    datos.sort(key=lambda x: (-x['puntos'], -x['porcentaje']))
+    for i, d in enumerate(datos, 1):
+        d['posicion'] = i
+        d['medalla'] = _medalla(i)
+    return datos
+
+
+def _calcular_ranking_global():
+    """Top estudiantes de toda la plataforma."""
+    from django.db.models import Sum
+    scores = UserScore.objects.select_related('user').order_by('-total_points')[:50]
+    datos = []
+    for i, s in enumerate(scores, 1):
+        datos.append({
+            'user': s.user,
+            'puntos': s.total_points,
+            'lecciones': s.lessons_completed,
+            'posicion': i,
+            'medalla': _medalla(i),
+        })
+    return datos
+
+
+def ranking_curso(request, curso_slug):
+    """Ranking de estudiantes de un curso."""
+    curso = get_object_or_404(Course, slug=curso_slug, is_active=True)
+    ranking = _calcular_ranking_curso(curso)
+
+    # Posicion del usuario actual si esta logueado
+    mi_posicion = None
+    if request.user.is_authenticated:
+        for d in ranking:
+            if d['user'].id == request.user.id:
+                mi_posicion = d
+                break
+
+    return render(request, 'core/ranking_curso.html', {
+        'curso': curso,
+        'ranking': ranking,
+        'mi_posicion': mi_posicion,
+        'total': len(ranking),
+    })
+
+
+def ranking_global(request):
+    """Ranking global de estudiantes."""
+    ranking = _calcular_ranking_global()
+
+    mi_posicion = None
+    if request.user.is_authenticated:
+        for d in ranking:
+            if d['user'].id == request.user.id:
+                mi_posicion = d
+                break
+
+    return render(request, 'core/ranking_global.html', {
+        'ranking': ranking,
+        'mi_posicion': mi_posicion,
+    })
+
+
+@staff_member_required
+def ranking_profesor(request):
+    """Ranking de los cursos del profesor."""
+    mis_cursos = Course.objects.filter(teachers=request.user, is_active=True)
+    if not mis_cursos.exists():
+        mis_cursos = Course.objects.filter(is_active=True)
+
+    cursos_ranking = []
+    for curso in mis_cursos:
+        top = _calcular_ranking_curso(curso)[:5]
+        cursos_ranking.append({
+            'curso': curso,
+            'top': top,
+            'total': Inscripcion.objects.filter(course=curso).count(),
+        })
+
+    return render(request, 'core/ranking_profesor.html', {
+        'cursos_ranking': cursos_ranking,
+    })

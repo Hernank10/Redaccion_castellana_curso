@@ -1,0 +1,97 @@
+{% extends 'core/base.html' %}
+{% load i18n %}
+{% block title %}Ranking · {{ curso.name }}{% endblock %}
+{% block content %}
+<style>
+.rk-container{max-width:1000px;margin:40px auto;padding:20px;}
+.rk-header{background:linear-gradient(135deg,#1a1a2e,#2a1a3e);padding:30px;border-radius:16px;border:1px solid #2a2a3e;margin-bottom:25px;text-align:center;}
+.rk-header h1{color:#fff;margin:0 0 10px;font-size:1.8em;}
+.rk-header p{color:#aaa;margin:0;}
+.rk-podio{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin:30px 0;align-items:end;}
+.rk-podio-item{background:#1a1a2e;padding:20px;border-radius:12px;text-align:center;border:2px solid #2a2a3e;}
+.rk-podio-item.p1{border-color:#ffd700;background:linear-gradient(135deg,#1a1a2e,#3a2a1e);transform:scale(1.05);}
+.rk-podio-item.p2{border-color:#c0c0c0;}
+.rk-podio-item.p3{border-color:#cd7f32;}
+.rk-podio-item .medalla{font-size:3em;}
+.rk-podio-item .nombre{color:#fff;font-weight:bold;margin-top:8px;font-size:1.1em;}
+.rk-podio-item .puntos{color:#00d4ff;font-size:1.5em;font-weight:bold;margin-top:5px;}
+.rk-podio-item .detalle{color:#888;font-size:.8em;margin-top:5px;}
+.rk-tabla{width:100%;border-collapse:collapse;background:#1a1a2e;border-radius:12px;overflow:hidden;}
+.rk-tabla th{background:#0f0f1e;color:#00d4ff;padding:14px;text-align:left;font-size:.85em;text-transform:uppercase;letter-spacing:1px;}
+.rk-tabla td{padding:14px;border-bottom:1px solid #2a2a3e;color:#fff;}
+.rk-tabla tr:hover{background:#1f1f33;}
+.rk-tabla tr.mi-fila{background:rgba(0,212,255,.1);border-left:3px solid #00d4ff;}
+.rk-pos{font-size:1.3em;font-weight:bold;color:#888;}
+.rk-pts{color:#00d4ff;font-weight:bold;font-size:1.1em;}
+.pbar{background:#2a2a3e;border-radius:6px;height:8px;overflow:hidden;margin:4px 0;}
+.pbar-fill{background:linear-gradient(90deg,#00d4ff,#00ff88);height:100%;}
+.btn{display:inline-block;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:500;font-size:.9em;border:none;cursor:pointer;}
+.btn-primary{background:linear-gradient(90deg,#00d4ff,#00ff88);color:#000;}
+.btn-secondary{background:#2a2a3e;color:#fff;}
+</style>
+<div class="rk-container">
+    <a href="{% url 'course_detail' curso.slug %}" style="color:#00d4ff;text-decoration:none;">← Volver al curso</a>
+
+    <div class="rk-header" style="margin-top:15px;">
+        <h1>🏆 {% trans "Ranking" %}</h1>
+        <p>{{ curso.icon }} {{ curso.name }} · {{ total }} {% trans "estudiantes" %}</p>
+    </div>
+
+    {% if mi_posicion %}
+    <div style="background:#1a1a2e;padding:18px;border-radius:12px;border:1px solid #00d4ff;margin-bottom:25px;text-align:center;">
+        <div style="color:#aaa;font-size:.85em;">{% trans "Tu posicion" %}</div>
+        <div style="color:#00d4ff;font-size:2em;font-weight:bold;">#{{ mi_posicion.posicion }} {{ mi_posicion.medalla }}</div>
+        <div style="color:#888;font-size:.9em;">{{ mi_posicion.puntos }} {% trans "puntos" %} · {{ mi_posicion.porcentaje }}%</div>
+    </div>
+    {% endif %}
+
+    {% if ranking|length >= 3 %}
+    <div class="rk-podio">
+        <div class="rk-podio-item p2">
+            <div class="medalla">🥈</div>
+            <div class="nombre">{{ ranking.1.user.username }}</div>
+            <div class="puntos">{{ ranking.1.puntos }}</div>
+            <div class="detalle">{{ ranking.1.porcentaje }}% · {{ ranking.1.completadas }}/{{ ranking.1.total }}</div>
+        </div>
+        <div class="rk-podio-item p1">
+            <div class="medalla">🥇</div>
+            <div class="nombre">{{ ranking.0.user.username }}</div>
+            <div class="puntos">{{ ranking.0.puntos }}</div>
+            <div class="detalle">{{ ranking.0.porcentaje }}% · {{ ranking.0.completadas }}/{{ ranking.0.total }}</div>
+        </div>
+        <div class="rk-podio-item p3">
+            <div class="medalla">🥉</div>
+            <div class="nombre">{{ ranking.2.user.username }}</div>
+            <div class="puntos">{{ ranking.2.puntos }}</div>
+            <div class="detalle">{{ ranking.2.porcentaje }}% · {{ ranking.2.completadas }}/{{ ranking.2.total }}</div>
+        </div>
+    </div>
+    {% endif %}
+
+    <table class="rk-tabla">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>{% trans "Estudiante" %}</th>
+                <th>{% trans "Puntos" %}</th>
+                <th>{% trans "Progreso" %}</th>
+                <th>{% trans "Cert." %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in ranking %}
+            <tr {% if mi_posicion and d.user.id == mi_posicion.user.id %}class="mi-fila"{% endif %}>
+                <td class="rk-pos">{{ d.medalla }} {{ d.posicion }}</td>
+                <td><strong>{{ d.user.username }}</strong></td>
+                <td class="rk-pts">{{ d.puntos }}</td>
+                <td style="min-width:180px;">
+                    <div class="pbar"><div class="pbar-fill" style="width: {{ d.porcentaje }}%;"></div></div>
+                    <small style="color:#888;">{{ d.completadas }}/{{ d.total }} ({{ d.porcentaje }}%)</small>
+                </td>
+                <td>{% if d.certificado %}✅{% else %}—{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -27,6 +27,7 @@
                 <a href="{% url 'index' %}"><i class="fas fa-home"></i> {% trans "Inicio" %}</a>
                 <a href="/cursos/"><i class="fas fa-book"></i> {% trans "Cursos" %}</a>
                 <a href="/recursos/"><i class="fas fa-folder-open"></i> {% trans "Recursos" %}</a>
+                <a href="{% url 'ranking_global' %}"><i class="fas fa-trophy"></i> {% trans "Ranking" %}</a>
                 {% if user.is_authenticated %}
                    <a href="{% url 'dashboard' %}"><i class="fas fa-chart-line"></i> {% trans "Mi progreso" %}</a>
                    {% if user.is_staff %}
