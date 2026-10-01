@@ -1736,7 +1736,9 @@ def buscar(request):
             lecciones = Lesson.objects.filter(is_active=True).select_related('course')
             if q:
                 lecciones = lecciones.filter(
-                    Q(title__icontains=q) | Q(content__icontains=q) | Q(course__name__icontains=q)
+                    Q(title__icontains=q) | Q(meaning__icontains=q) |
+                    Q(example__icontains=q) | Q(breakdown__icontains=q) |
+                    Q(course__name__icontains=q)
                 )
             if dificultad:
                 lecciones = lecciones.filter(difficulty=dificultad)

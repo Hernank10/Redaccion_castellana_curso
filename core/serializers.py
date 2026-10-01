@@ -40,7 +40,8 @@ class LessonSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Lesson
-        fields = ['id', 'title', 'content', 'order', 'difficulty', 'is_active', 'exercises_count']
+        fields = ['id', 'title', 'meaning', 'example', 'breakdown', 'root',
+                  'order', 'difficulty', 'duration_minutes', 'is_active', 'exercises_count']
 
     def get_exercises_count(self, obj):
         return obj.exercises.count()
@@ -99,7 +100,7 @@ class UserStreakSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserStreak
-        fields = ['username', 'current_streak', 'last_activity']
+        fields = ['username', 'current_streak']
 
 
 class CertificadoSerializer(serializers.ModelSerializer):

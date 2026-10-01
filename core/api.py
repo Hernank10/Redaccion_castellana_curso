@@ -163,7 +163,7 @@ class UserProgressViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return UserProgress.objects.filter(user=self.request.user).select_related('lesson', 'lesson__course')
+        return UserProgress.objects.filter(user=self.request.user).select_related('lesson', 'lesson__course').order_by('-id')
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -208,7 +208,7 @@ class InscripcionViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Inscripcion.objects.filter(user=self.request.user).select_related('course')
+        return Inscripcion.objects.filter(user=self.request.user).select_related('course').order_by('-fecha')
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -233,7 +233,7 @@ class CertificadoViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Certificado.objects.filter(usuario=self.request.user).select_related('curso')
+        return Certificado.objects.filter(usuario=self.request.user).select_related('curso').order_by('-fecha_emision')
 
 
 class LogroViewSet(viewsets.ReadOnlyModelViewSet):
@@ -241,7 +241,7 @@ class LogroViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Logro.objects.filter(user=self.request.user)
+        return Logro.objects.filter(user=self.request.user).order_by('-fecha')
 
 
 class NotificacionViewSet(viewsets.ModelViewSet):
@@ -249,7 +249,7 @@ class NotificacionViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Notificacion.objects.filter(user=self.request.user)
+        return Notificacion.objects.filter(user=self.request.user).order_by('-fecha')
 
     @action(detail=True, methods=['post'])
     def leer(self, request, pk=None):
