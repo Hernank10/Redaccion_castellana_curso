@@ -1,0 +1,39 @@
+{% extends 'core/base.html' %}
+{% load i18n %}
+{% block title %}{{ accion }} leccion{% endblock %}
+{% block content %}
+<div style="max-width:800px;margin:40px auto;padding:20px;">
+    <div style="background:#1a1a2e;padding:35px;border-radius:16px;border:1px solid #2a2a3e;">
+        <h1 style="color:#fff;margin:0 0 25px;">📖 {{ accion }} leccion</h1>
+        <p style="color:#888;margin-bottom:20px;">{{ curso.name }}</p>
+        <form method="post">
+            {% csrf_token %}
+            <label style="color:#ccc;display:block;margin:15px 0 6px;font-weight:500;">Titulo</label>
+            <input type="text" name="title" value="{{ leccion.title|default:'' }}" required style="width:100%;padding:12px;background:#0f0f1e;border:1px solid #333;border-radius:8px;color:#fff;font-size:1em;box-sizing:border-box;">
+
+            <label style="color:#ccc;display:block;margin:15px 0 6px;font-weight:500;">Contenido (HTML permitido)</label>
+            <textarea name="content" style="width:100%;padding:12px;background:#0f0f1e;border:1px solid #333;border-radius:8px;color:#fff;font-size:1em;box-sizing:border-box;min-height:250px;font-family:monospace;">{{ leccion.content|default:'' }}</textarea>
+
+            <label style="color:#ccc;display:block;margin:15px 0 6px;font-weight:500;">Orden</label>
+            <input type="number" name="order" value="{{ leccion.order|default:0 }}" style="width:100%;padding:12px;background:#0f0f1e;border:1px solid #333;border-radius:8px;color:#fff;font-size:1em;box-sizing:border-box;">
+
+            <label style="color:#ccc;display:block;margin:15px 0 6px;font-weight:500;">Dificultad</label>
+            <select name="difficulty" style="width:100%;padding:12px;background:#0f0f1e;border:1px solid #333;border-radius:8px;color:#fff;font-size:1em;box-sizing:border-box;">
+                {% for key, label in dificultades %}
+                <option value="{{ key }}" {% if leccion.difficulty == key %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+
+            <div style="display:flex;align-items:center;gap:10px;margin-top:15px;">
+                <input type="checkbox" name="is_active" id="is_active" {% if leccion.is_active or not leccion %}checked{% endif %}>
+                <label for="is_active" style="color:#ccc;margin:0;">Activa</label>
+            </div>
+
+            <div style="display:flex;gap:10px;margin-top:25px;">
+                <button type="submit" style="flex:1;padding:12px;background:linear-gradient(90deg,#00d4ff,#00ff88);border:none;border-radius:8px;color:#000;font-weight:600;font-size:1em;cursor:pointer;">💾 Guardar</button>
+                <a href="{% url 'teacher_course_lessons' curso.slug %}" style="padding:12px 22px;background:#2a2a3e;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;">← Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

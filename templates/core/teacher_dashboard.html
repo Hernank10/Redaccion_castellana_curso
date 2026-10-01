@@ -23,7 +23,10 @@
 .btn-primary:hover{transform:translateY(-2px);}
 </style>
 <div class="td-container">
-    <h1 class="td-title">👨‍🏫 {% trans "Panel del Profesor" %}</h1>
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px;margin-bottom:20px;">
+        <h1 class="td-title" style="margin:0;">👨‍🏫 {% trans "Panel del Profesor" %}</h1>
+        <a href="{% url 'teacher_course_new' %}" class="btn btn-primary">➕ {% trans "Nuevo curso" %}</a>
+    </div>
     <p style="color:#aaa;margin-bottom:30px;">{{ user.get_full_name|default:user.username }}</p>
 
     <div class="td-grid">
@@ -45,7 +48,11 @@
                     <span>📊 {{ cd.promedio }}% promedio</span>
                     <span>🎓 {{ cd.certificados }} certificados</span>
                 </div>
-                <a href="{% url 'teacher_course_students' cd.curso.slug %}" class="btn btn-primary">{% trans "Ver estudiantes" %} →</a>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;">
+                    <a href="{% url 'teacher_course_students' cd.curso.slug %}" class="btn btn-primary">👥 Estudiantes</a>
+                    <a href="{% url 'teacher_course_lessons' cd.curso.slug %}" class="btn" style="background:#2a2a3e;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-size:.9em;">📖 Lecciones</a>
+                    <a href="{% url 'teacher_course_edit' cd.curso.slug %}" class="btn" style="background:#ffd700;color:#000;padding:10px 18px;border-radius:8px;text-decoration:none;font-size:.9em;">✏️ Editar</a>
+                </div>
             </div>
             {% endfor %}
         </div>

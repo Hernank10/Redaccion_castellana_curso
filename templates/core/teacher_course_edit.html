@@ -1,0 +1,44 @@
+{% extends 'core/base.html' %}
+{% load i18n %}
+{% block title %}{{ accion }} curso{% endblock %}
+{% block content %}
+<div style="max-width:800px;margin:40px auto;padding:20px;">
+    <div style="background:#1a1a2e;padding:35px;border-radius:16px;border:1px solid #2a2a3e;">
+        <h1 style="color:#fff;margin:0 0 25px;">📚 {{ accion }} curso</h1>
+        <form method="post">
+            {% csrf_token %}
+            <label style="color:#ccc;display:block;margin:15px 0 6px;font-weight:500;">Nombre</label>
+            <input type="text" name="name" value="{{ curso.name|default:'' }}" required style="width:100%;padding:12px;background:#0f0f1e;border:1px solid #333;border-radius:8px;color:#fff;font-size:1em;box-sizing:border-box;">
+
+            <label style="color:#ccc;display:block;margin:15px 0 6px;font-weight:500;">Slug (URL)</label>
+            <input type="text" name="slug" value="{{ curso.slug|default:'' }}" placeholder="gramatica-castellana" style="width:100%;padding:12px;background:#0f0f1e;border:1px solid #333;border-radius:8px;color:#fff;font-size:1em;box-sizing:border-box;">
+
+            <label style="color:#ccc;display:block;margin:15px 0 6px;font-weight:500;">Descripcion</label>
+            <textarea name="description" style="width:100%;padding:12px;background:#0f0f1e;border:1px solid #333;border-radius:8px;color:#fff;font-size:1em;box-sizing:border-box;min-height:120px;">{{ curso.description|default:'' }}</textarea>
+
+            <label style="color:#ccc;display:block;margin:15px 0 6px;font-weight:500;">Icono (emoji)</label>
+            <input type="text" name="icon" value="{{ curso.icon|default:'📚' }}" maxlength="5" style="width:100%;padding:12px;background:#0f0f1e;border:1px solid #333;border-radius:8px;color:#fff;font-size:1em;box-sizing:border-box;">
+
+            <label style="color:#ccc;display:block;margin:15px 0 6px;font-weight:500;">Categoria</label>
+            <select name="category" style="width:100%;padding:12px;background:#0f0f1e;border:1px solid #333;border-radius:8px;color:#fff;font-size:1em;box-sizing:border-box;">
+                {% for key, label in categorias %}
+                <option value="{{ key }}" {% if curso.category == key %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+
+            <label style="color:#ccc;display:block;margin:15px 0 6px;font-weight:500;">Orden</label>
+            <input type="number" name="order" value="{{ curso.order|default:0 }}" style="width:100%;padding:12px;background:#0f0f1e;border:1px solid #333;border-radius:8px;color:#fff;font-size:1em;box-sizing:border-box;">
+
+            <div style="display:flex;align-items:center;gap:10px;margin-top:15px;">
+                <input type="checkbox" name="is_active" id="is_active" {% if curso.is_active or not curso %}checked{% endif %}>
+                <label for="is_active" style="color:#ccc;margin:0;">Activo</label>
+            </div>
+
+            <div style="display:flex;gap:10px;margin-top:25px;">
+                <button type="submit" style="flex:1;padding:12px;background:linear-gradient(90deg,#00d4ff,#00ff88);border:none;border-radius:8px;color:#000;font-weight:600;font-size:1em;cursor:pointer;">💾 Guardar</button>
+                <a href="{% url 'teacher_dashboard' %}" style="padding:12px 22px;background:#2a2a3e;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;">← Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

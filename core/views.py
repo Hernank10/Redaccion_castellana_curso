@@ -1406,3 +1406,124 @@ def teacher_student_progress_pdf(request, curso_slug, user_id):
     response['Content-Disposition'] = 'attachment; filename="progreso_' + estudiante.username + '.pdf"'
     return response
 
+
+# ============================================================
+# CRUD DE CURSOS Y LECCIONES (profesor)
+# ============================================================
+
+@staff_member_required
+def teacher_course_edit(request, curso_slug=None):
+    curso = None
+    if curso_slug:
+        curso = get_object_or_404(Course, slug=curso_slug)
+
+    if request.method == 'POST':
+        name = request.POST.get('name', '').strip()
+        slug = request.POST.get('slug', '').strip() or name.lower().replace(' ', '-')
+        description = request.POST.get('description', '')
+        icon = request.POST.get('icon', '📚')
+        category = request.POST.get('category', 'general')
+        order = int(request.POST.get('order', 0))
+        is_active = request.POST.get('is_active') == 'on'
+
+        if curso:
+            curso.name = name
+            curso.slug = slug
+            curso.description = description
+            curso.icon = icon
+            curso.category = category
+            curso.order = order
+            curso.is_active = is_active
+            curso.save()
+        else:
+            curso = Course.objects.create(
+                name=name, slug=slug, description=description,
+                icon=icon, category=category, order=order, is_active=is_active,
+            )
+            curso.teachers.add(request.user)
+
+        return redirect('teacher_course_students', curso_slug=curso.slug)
+
+    context = {
+        'curso': curso,
+        'categorias': Course.CATEGORY_CHOICES,
+        'accion': 'Editar' if curso else 'Crear',
+    }
+    return render(request, 'core/teacher_course_edit.html', context)
+
+
+@staff_member_required
+def teacher_course_delete(request, curso_slug):
+    curso = get_object_or_404(Course, slug=curso_slug)
+    if request.method == 'POST':
+        curso.delete()
+        return redirect('teacher_dashboard')
+    return render(request, 'core/teacher_confirm_delete.html', {
+        'objeto': curso,
+        'tipo': 'curso',
+    })
+
+
+@staff_member_required
+def teacher_course_lessons(request, curso_slug):
+    curso = get_object_or_404(Course, slug=curso_slug)
+    lecciones = curso.lessons.all().order_by('order')
+    return render(request, 'core/teacher_course_lessons.html', {
+        'curso': curso,
+        'lecciones': lecciones,
+    })
+
+
+@staff_member_required
+def teacher_lesson_edit(request, curso_slug, lesson_id=None):
+    curso = get_object_or_404(Course, slug=curso_slug)
+    leccion = None
+    if lesson_id:
+        leccion = get_object_or_404(Lesson, id=lesson_id, course=curso)
+
+    if request.method == 'POST':
+        title = request.POST.get('title', '').strip()
+        content = request.POST.get('content', '')
+        order = int(request.POST.get('order', 0))
+        difficulty = request.POST.get('difficulty', 'beginner')
+        is_active = request.POST.get('is_active') == 'on'
+
+        if leccion:
+            leccion.title = title
+            leccion.content = content
+            leccion.order = order
+            leccion.difficulty = difficulty
+            leccion.is_active = is_active
+            leccion.save()
+        else:
+            leccion = Lesson.objects.create(
+                course=curso, title=title, content=content,
+                order=order, difficulty=difficulty, is_active=is_active,
+            )
+
+        return redirect('teacher_lesson_detail', lesson_id=leccion.id)
+
+    dificultades = getattr(Lesson, 'DIFFICULTY_CHOICES', [
+        ('beginner', 'Principiante'), ('intermediate', 'Intermedio'), ('advanced', 'Avanzado')
+    ])
+    context = {
+        'curso': curso,
+        'leccion': leccion,
+        'dificultades': dificultades,
+        'accion': 'Editar' if leccion else 'Crear',
+    }
+    return render(request, 'core/teacher_lesson_edit.html', context)
+
+
+@staff_member_required
+def teacher_lesson_delete(request, curso_slug, lesson_id):
+    curso = get_object_or_404(Course, slug=curso_slug)
+    leccion = get_object_or_404(Lesson, id=lesson_id, course=curso)
+    if request.method == 'POST':
+        leccion.delete()
+        return redirect('teacher_course_lessons', curso_slug=curso.slug)
+    return render(request, 'core/teacher_confirm_delete.html', {
+        'objeto': leccion,
+        'tipo': 'leccion',
+        'curso': curso,
+    })

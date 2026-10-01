@@ -1,0 +1,43 @@
+{% extends 'core/base.html' %}
+{% load i18n %}
+{% block title %}Lecciones de {{ curso.name }}{% endblock %}
+{% block content %}
+<div style="max-width:1000px;margin:40px auto;padding:20px;">
+    <a href="{% url 'teacher_course_students' curso.slug %}" style="color:#00d4ff;text-decoration:none;">← Volver al curso</a>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin:15px 0 25px;flex-wrap:wrap;gap:10px;">
+        <h1 style="color:#fff;margin:0;">📖 {{ curso.icon }} {{ curso.name }}</h1>
+        <a href="{% url 'teacher_lesson_new' curso.slug %}" style="padding:10px 18px;background:linear-gradient(90deg,#00d4ff,#00ff88);color:#000;border-radius:8px;text-decoration:none;font-weight:600;">➕ Nueva leccion</a>
+    </div>
+
+    {% if lecciones %}
+    <table style="width:100%;border-collapse:collapse;background:#1a1a2e;border-radius:12px;overflow:hidden;">
+        <thead>
+            <tr>
+                <th style="background:#0f0f1e;color:#00d4ff;padding:14px;text-align:left;font-size:.85em;text-transform:uppercase;border-bottom:1px solid #2a2a3e;">#</th>
+                <th style="background:#0f0f1e;color:#00d4ff;padding:14px;text-align:left;font-size:.85em;text-transform:uppercase;border-bottom:1px solid #2a2a3e;">Titulo</th>
+                <th style="background:#0f0f1e;color:#00d4ff;padding:14px;text-align:left;font-size:.85em;text-transform:uppercase;border-bottom:1px solid #2a2a3e;">Ejercicios</th>
+                <th style="background:#0f0f1e;color:#00d4ff;padding:14px;text-align:left;font-size:.85em;text-transform:uppercase;border-bottom:1px solid #2a2a3e;">Estado</th>
+                <th style="background:#0f0f1e;color:#00d4ff;padding:14px;text-align:left;font-size:.85em;text-transform:uppercase;border-bottom:1px solid #2a2a3e;">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for lec in lecciones %}
+            <tr style="border-bottom:1px solid #2a2a3e;">
+                <td style="padding:14px;color:#fff;">{{ lec.order }}</td>
+                <td style="padding:14px;color:#fff;"><strong>{{ lec.title }}</strong></td>
+                <td style="padding:14px;color:#fff;">{{ lec.exercises.count }}</td>
+                <td style="padding:14px;color:#fff;">{% if lec.is_active %}✅{% else %}❌{% endif %}</td>
+                <td style="padding:14px;">
+                    <a href="{% url 'teacher_lesson_detail' lec.id %}" style="display:inline-block;padding:6px 10px;background:#2a2a3e;color:#fff;border-radius:6px;text-decoration:none;font-size:.85em;margin:2px;">👁️</a>
+                    <a href="{% url 'teacher_lesson_edit' curso.slug lec.id %}" style="display:inline-block;padding:6px 10px;background:#ffd700;color:#000;border-radius:6px;text-decoration:none;font-size:.85em;margin:2px;">✏️</a>
+                    <a href="{% url 'teacher_lesson_delete' curso.slug lec.id %}" style="display:inline-block;padding:6px 10px;background:#ff4444;color:#fff;border-radius:6px;text-decoration:none;font-size:.85em;margin:2px;">🗑️</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color:#aaa;text-align:center;padding:40px;">No hay lecciones. Crea la primera.</p>
+    {% endif %}
+</div>
+{% endblock %}
